@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     "NLP",
     "tickets",
   ],
-  authors: [{ name: "Equipo Vera", url: "mailto:soporte@vera.ai" }],
+  authors: [{ name: "Equipo Zyntek", url: "jamesrgal@gmail.com" }],
   metadataBase: new URL("https://your-domain.example"),
   openGraph: {
     title: "Vera — Asistente IA para soporte al cliente",

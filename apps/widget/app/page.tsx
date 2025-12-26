@@ -10,7 +10,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-col justify-center items-center bg-red-50">
-      <h1>Apps/Web</h1>
+      <h1>Apps/Widget</h1>
 
       <div className="mt-4">
         <Button size="sm" onClick={() => addUser()}>
