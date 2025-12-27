@@ -15,7 +15,7 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Vera — Asistente IA para soporte al cliente",
+  title: "Vera Widget — Asistente IA para soporte al cliente",
   description:
     "Vera automatiza el soporte al cliente: respuestas automáticas, clasificación de tickets, escalado y analíticas.",
   keywords: [

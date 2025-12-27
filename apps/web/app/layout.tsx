@@ -1,18 +1,20 @@
-import { Geist, Geist_Mono } from "next/font/google"
-import type { Metadata } from "next"
+import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata } from "next";
 
-import "@workspace/ui/globals.css"
-import { Providers } from "@/components/providers"
+import "@workspace/ui/globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
+import { Providers } from "@/components/providers";
+import { esES } from "@clerk/localizations";
 
 const fontSans = Geist({
   subsets: ["latin"],
   variable: "--font-sans",
-})
+});
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
-})
+});
 
 export const metadata: Metadata = {
   title: "Vera — Asistente IA para soporte al cliente",
@@ -51,24 +53,36 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
     shortcut: "/favicon-96x96.png",
     apple: "/apple-touch-icon.png",
-    other: [
-      { url: "/favicon.svg", rel: "icon", sizes: "any" },
-    ],
+    other: [{ url: "/favicon.svg", rel: "icon", sizes: "any" }],
   },
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <body
         className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
       >
-        <Providers>{children}</Providers>
+        <ClerkProvider
+          localization={{
+            ...esES,
+            signIn: {
+              ...esES.signIn,
+              start: {
+                ...esES.signIn?.start,
+                title: "Inicia sesión en tu cuenta",
+                subtitle: "Ingresa tus credenciales para continuar",
+              },
+            },
+          }}
+        >
+          <Providers>{children}</Providers>
+        </ClerkProvider>
       </body>
     </html>
-  )
+  );
 }
