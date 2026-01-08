@@ -21,6 +21,7 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "@clerk/shared",
       "esbuild"
     ]
   }
