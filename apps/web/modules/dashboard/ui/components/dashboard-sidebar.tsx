@@ -25,6 +25,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
+import { cn } from "@workspace/ui/lib/utils";
 
 const custommerSupportItems = [
   {
@@ -95,6 +96,8 @@ export function DashboardSidebar() {
                       "group-data-[collapsible=icon]:justify-center! gap-2!",
                     organizationPreviewTextContainer:
                       "group-data-[collapsible=icon]:hidden! text-xs! font-medium! text-sidebar-foreground!",
+                    organizationSwitcherTriggerIcon:
+                      "group-data-[collapsible=icon]:hidden! ml-auto! text-sidebar-foreground!",
                   },
                 }}
               />
@@ -114,6 +117,10 @@ export function DashboardSidebar() {
                   <SidebarMenuButton
                     asChild
                     isActive={isActive(item.url)}
+                    className={cn(
+                      isActive(item.url) &&
+                        "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
+                    )}
                     tooltip={item.title}
                   >
                     <Link href={item.url}>
@@ -137,6 +144,10 @@ export function DashboardSidebar() {
                   <SidebarMenuButton
                     asChild
                     isActive={isActive(item.url)}
+                    className={cn(
+                      isActive(item.url) &&
+                        "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
+                    )}
                     tooltip={item.title}
                   >
                     <Link href={item.url}>
@@ -160,6 +171,10 @@ export function DashboardSidebar() {
                   <SidebarMenuButton
                     asChild
                     isActive={isActive(item.url)}
+                    className={cn(
+                      isActive(item.url) &&
+                        "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
+                    )}
                     tooltip={item.title}
                   >
                     <Link href={item.url}>
