@@ -1,18 +1,30 @@
 import React from "react";
-// import { WidgetHeader } from "../components/widget-header";
-// import { WidgetFooter } from "../components/widget-footer";
-import WidgetAuthScreen from "../screens/widget-auth-screen";
+import { useAtomValue } from "jotai";
+
+import { screenAtom } from "@/modules/widget/atoms/widget-atoms";
+import { WidgetAuthScreen } from "@/modules/widget/ui/screens/widget-auth-screen";
 
 interface Props {
   organizationId: string;
 }
 
 export function WidgetView({ organizationId }: Props) {
+  const screen = useAtomValue(screenAtom);
+
+  const screens = {
+    error: <div>Error Screen</div>,
+    loading: <div>Loading Screen</div>,
+    auth: <WidgetAuthScreen />,
+    voice: <div>Voice Screen</div>,
+    inbox: <div>Inbox Screen</div>,
+    selection: <div>Selection Screen</div>,
+    chat: <div>Chat Screen</div>,
+    contact: <div>Contact Screen</div>,
+  };
+
   return (
     <main className="flex h-full min-h-screen flex-col overflow-hidden rounded-xl border bg-muted">
-      {/* <div className="flex flex-1">Widget View: {organizationId}</div>
-      <WidgetFooter /> */}
-      <WidgetAuthScreen />
+      {screens[screen]}
     </main>
   );
 }
