@@ -20,7 +20,7 @@ export function WidgetLoadingScreen({
 }: {
   organizationId: string | null;
 }) {
-  console.log(organizationId)
+  console.log(organizationId);
   const [step, setStep] = useState<InitStep>("org");
   const [sessionValid, setSessionValid] = useState(false);
 
@@ -45,7 +45,7 @@ export function WidgetLoadingScreen({
     if (!organizationId) {
       setErrorMessage("Organization ID is required");
       setScreen("error");
-      console.log("Organization ID is required")
+      console.log("Organization ID is required");
       return;
     }
 
@@ -104,7 +104,14 @@ export function WidgetLoadingScreen({
         setSessionValid(false);
         setStep("done");
       });
-  }, [step, contactSessionId, validateContactSession, setLoadingMessage]);
+  }, [
+    step,
+    setStep,
+    setSessionValid,
+    contactSessionId,
+    validateContactSession,
+    setLoadingMessage,
+  ]);
 
   useEffect(() => {
     if (step !== "done") return;
