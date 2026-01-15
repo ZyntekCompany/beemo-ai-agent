@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   contactSessionIdAtom,
   organizationIdAtom,
+  screenAtom,
 } from "@/modules/widget/atoms/widget-atoms";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
@@ -20,9 +21,9 @@ const formSchema = z.object({
   email: z.string().email("Invalid email address"),
 });
 
-const organizationId = "123"
-
 export function WidgetAuthScreen() {
+  const setScreen = useSetAtom(screenAtom);
+
   const organizationId = useAtomValue(organizationIdAtom);
   const setContactSessionId = useSetAtom(
     contactSessionIdAtom(organizationId || "")
@@ -39,7 +40,6 @@ export function WidgetAuthScreen() {
   const createContactSessions = useMutation(api.public.contactSessions.create);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(organizationId)
     if (!organizationId) {
       return;
     }
@@ -66,6 +66,7 @@ export function WidgetAuthScreen() {
     });
 
     setContactSessionId(contactSessionId);
+    setScreen("selection");
   };
 
   return (
@@ -120,7 +121,12 @@ export function WidgetAuthScreen() {
           />
         </FieldGroup>
 
-        <Button form="widget-auth-screen" disabled={form.formState.isSubmitting} size="lg" type="submit">
+        <Button
+          form="widget-auth-screen"
+          disabled={form.formState.isSubmitting}
+          size="lg"
+          type="submit"
+        >
           Continue
         </Button>
       </form>

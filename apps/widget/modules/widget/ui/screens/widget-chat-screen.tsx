@@ -31,8 +31,10 @@ import {
 import { api } from "@workspace/backend/_generated/api";
 import { Button } from "@workspace/ui/components/button";
 import { WidgetHeader } from "@/modules/widget/ui/components/widget-header";
-import { Form, FormField } from "@workspace/ui/components/form";
 import { FieldGroup } from "@workspace/ui/components/field";
+import { useInfiniteScroll } from "@workspace/ui/hooks/use-infinite-scroll";
+import { InfiniteScrollTrigger } from "@workspace/ui/components/infinite-scroll-trigger";
+import { DicebearAvatar } from "@workspace/ui/components/dicebear-avatar";
 
 const formSchema = z.object({
   message: z.string().min(1, "Message is required"),
@@ -76,7 +78,18 @@ export function WidgetChatScreen() {
     { initialNumItems: 10 }
   );
 
-  console.log(messages);
+  const {
+    canLoadMore,
+    isLoadingMore,
+    handleLoadMore,
+    isExhausted,
+    isLoadingFirstPage,
+    topElementRef,
+  } = useInfiniteScroll({
+    status: messages.status,
+    loadMore: messages.loadMore,
+    loadSize: 10,
+  });
 
   const createMessage = useAction(api.public.messages.create);
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -108,6 +121,12 @@ export function WidgetChatScreen() {
       </WidgetHeader>
       <AIConversation>
         <AIConversationContent>
+          <InfiniteScrollTrigger
+            canLoadMore={canLoadMore}
+            isLoadingMore={isLoadingMore}
+            onLoadMore={handleLoadMore}
+            ref={topElementRef}
+          />
           {toUIMessages(messages.results ?? [])?.map((message) => {
             return (
               <AIMessage
@@ -117,6 +136,13 @@ export function WidgetChatScreen() {
                 <AIMessageContent>
                   <AIResponse>{message.content}</AIResponse>
                 </AIMessageContent>
+                {message.role === "assistant" && (
+                  <DicebearAvatar
+                    seed="assistant"
+                    imageUrl="/icons/agent-logo.svg"
+                    size={32}
+                  />
+                )}
               </AIMessage>
             );
           })}
