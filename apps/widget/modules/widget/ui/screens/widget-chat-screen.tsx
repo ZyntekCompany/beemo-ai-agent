@@ -78,18 +78,12 @@ export function WidgetChatScreen() {
     { initialNumItems: 10 }
   );
 
-  const {
-    canLoadMore,
-    isLoadingMore,
-    handleLoadMore,
-    isExhausted,
-    isLoadingFirstPage,
-    topElementRef,
-  } = useInfiniteScroll({
-    status: messages.status,
-    loadMore: messages.loadMore,
-    loadSize: 10,
-  });
+  const { canLoadMore, isLoadingMore, handleLoadMore, topElementRef } =
+    useInfiniteScroll({
+      status: messages.status,
+      loadMore: messages.loadMore,
+      loadSize: 10,
+    });
 
   const createMessage = useAction(api.public.messages.create);
   const onSubmit = async (values: z.infer<typeof formSchema>) => {

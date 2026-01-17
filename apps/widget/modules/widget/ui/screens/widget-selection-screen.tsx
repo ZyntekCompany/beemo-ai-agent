@@ -13,6 +13,7 @@ import {
 import { Button } from "@workspace/ui/components/button";
 import { api } from "@workspace/backend/_generated/api";
 import { WidgetHeader } from "@/modules/widget/ui/components/widget-header";
+import { WidgetFooter } from "@/modules/widget/ui/components/widget-footer";
 
 export function WidgetSelectionScreen() {
   const setScreen = useSetAtom(screenAtom);
@@ -79,6 +80,7 @@ export function WidgetSelectionScreen() {
           </Button>
         </p>
       </div>
+      <WidgetFooter />
     </>
   );
 }
