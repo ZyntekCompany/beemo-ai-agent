@@ -11,14 +11,19 @@ export function ConversationsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ResizablePanelGroup className="flex-1 h-full" orientation="horizontal">
-      <ResizablePanel defaultSize={30} maxSize={50} minSize={15}>
-        <ConversationsPanel />
+    <ResizablePanelGroup
+      className="flex-1 h-full min-h-0"
+      direction="horizontal"
+    >
+      <ResizablePanel defaultSize={25} minSize={20}>
+        <div className="flex h-full flex-col overflow-hidden">
+          <ConversationsPanel />
+        </div>
       </ResizablePanel>
       <ResizableHandle withHandle />
-      {/* <ResizablePanel defaultSize={70} className="h-full">
-        {children}
-      </ResizablePanel> */}
+      <ResizablePanel defaultSize={75} minSize={30}>
+        <div className="flex h-full flex-col overflow-hidden">{children}</div>
+      </ResizablePanel>
     </ResizablePanelGroup>
   );
 }
