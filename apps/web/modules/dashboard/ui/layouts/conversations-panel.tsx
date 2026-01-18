@@ -127,9 +127,10 @@ export function ConversationsPanel() {
                 >
                   <div
                     className={cn(
-                      "-translate-y-1/2 absolute top-1/2 left-0 h-[64%] w-1 rounded-br-full bg-neutral-300 opacity-0 transition-opacity",
-                      pathname === `/conversations/${conversation._id}` &&
-                        "opacity-100"
+                      "-translate-y-1/2 absolute top-1/2 left-0 h-[64%] w-1 rounded-br-full rounded-tr-full bg-primary transition-all duration-300 ease-in-out origin-center",
+                      pathname === `/conversations/${conversation._id}`
+                        ? "scale-y-100 opacity-100"
+                        : "scale-y-0 opacity-0"
                     )}
                   />
                   <DicebearAvatar
