@@ -62,7 +62,7 @@ export const getMany = query({
     const conversations = await ctx.db
       .query("conversations")
       .withIndex("by_contact_session_id", (q) =>
-        q.eq("contactSessionId", args.contactSessionId)
+        q.eq("contactSessionId", args.contactSessionId),
       )
       .order("desc")
       .paginate(args.paginationOpts);
@@ -88,7 +88,7 @@ export const getMany = query({
           threadId: conversation.threadId,
           lastMessage,
         };
-      })
+      }),
     );
 
     return {
@@ -121,7 +121,8 @@ export const create = mutation({
       threadId,
       message: {
         role: "assistant",
-        content: "Hola, como te puedo ayudar hoy?",
+        content:
+          "¡Hola! Soy Vera, su asistente virtual. ¿En qué puedo ayudarle el día de hoy? ✨",
       },
     });
 
