@@ -15,7 +15,7 @@ export function ConversationsLayout({
       className="flex-1 h-full min-h-0"
       direction="horizontal"
     >
-      <ResizablePanel defaultSize={25} minSize={20}>
+      <ResizablePanel defaultSize={32} minSize={20}>
         <div className="flex h-full flex-col overflow-hidden">
           <ConversationsPanel />
         </div>
