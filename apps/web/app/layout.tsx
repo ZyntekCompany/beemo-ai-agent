@@ -5,6 +5,7 @@ import "@workspace/ui/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Providers } from "@/components/providers";
 import { esES } from "@clerk/localizations";
+import { Toaster } from "@workspace/ui/components/sonner";
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -80,7 +81,9 @@ export default function RootLayout({
             },
           }}
         >
-          <Providers>{children}</Providers>
+          <Providers>
+            <Toaster />
+            {children}</Providers>
         </ClerkProvider>
       </body>
     </html>
