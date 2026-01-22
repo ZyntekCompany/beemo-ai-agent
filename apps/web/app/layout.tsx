@@ -5,7 +5,7 @@ import "@workspace/ui/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Providers } from "@/components/providers";
 import { esES } from "@clerk/localizations";
-import { Toaster } from "@workspace/ui/components/sonner";
+import { Toaster } from "react-hot-toast"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -82,7 +82,7 @@ export default function RootLayout({
           }}
         >
           <Providers>
-            <Toaster />
+            <Toaster position="top-center" />
             {children}</Providers>
         </ClerkProvider>
       </body>

@@ -1,7 +1,7 @@
 import { api } from "@workspace/backend/_generated/api";
 import { useAction } from "convex/react";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import toast from 'react-hot-toast';
 
 type PhoneNumbers = typeof api.private.vapi.getPhoneNumbers._returnType;
 type Assistants = typeof api.private.vapi.getAssitants._returnType;
