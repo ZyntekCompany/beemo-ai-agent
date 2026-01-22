@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useMutation } from "convex/react";
 import { useAtomValue, useSetAtom } from "jotai";
-import { MessageSquareIcon } from "lucide-react";
+import { MessageSquareIcon, MicIcon, PhoneIcon } from "lucide-react";
 
 import {
   contactSessionIdAtom,
   conversationIdAtom,
   errorMessageAtom,
+  hasVapiSecretsAtom,
   organizationIdAtom,
   screenAtom,
+  widgetSettingsAtom,
 } from "@/modules/widget/atoms/widget-atoms";
 import { Button } from "@workspace/ui/components/button";
 import { api } from "@workspace/backend/_generated/api";
@@ -20,13 +22,15 @@ export function WidgetSelectionScreen() {
   const setErrorMessage = useSetAtom(errorMessageAtom);
   const setConversationId = useSetAtom(conversationIdAtom);
 
+  const widgetSettings = useAtomValue(widgetSettingsAtom);
   const organizationId = useAtomValue(organizationIdAtom);
+  const hasVapiSecrets = useAtomValue(hasVapiSecretsAtom);
   const contactSessionId = useAtomValue(
     contactSessionIdAtom(organizationId || "")
   );
-  const [isPending, setIsPending] = useState(false);
 
   const createConversation = useMutation(api.public.conversations.create);
+  const [isPending, setIsPending] = useState(false);
 
   const handleNewConversation = async () => {
     if (!organizationId) {
@@ -66,19 +70,43 @@ export function WidgetSelectionScreen() {
         </div>
       </WidgetHeader>
       <div className="flex flex-1 flex-col gap-y-4 p-4 overflow-y-auto">
-        <p className="text-sm">
+        <Button
+          className="h-16 w-full justify-between"
+          variant="outline"
+          onClick={handleNewConversation}
+          disabled={isPending}
+        >
+          <div className="flex items-center gap-x-2">
+            <MessageSquareIcon className="size-4" />
+            <span>Start chat</span>
+          </div>
+        </Button>
+        {hasVapiSecrets && widgetSettings?.vapiSettings.assistantId && (
           <Button
             className="h-16 w-full justify-between"
             variant="outline"
-            onClick={handleNewConversation}
+            onClick={() => setScreen("voice")}
             disabled={isPending}
           >
             <div className="flex items-center gap-x-2">
-              <MessageSquareIcon className="size-4" />
-              <span>Start chat</span>
+              <MicIcon className="size-4" />
+              <span>Start voice call</span>
             </div>
           </Button>
-        </p>
+        )}
+        {hasVapiSecrets && widgetSettings?.vapiSettings.assistantId && (
+          <Button
+            className="h-16 w-full justify-between"
+            variant="outline"
+            onClick={() => setScreen("contact")}
+            disabled={isPending}
+          >
+            <div className="flex items-center gap-x-2">
+              <PhoneIcon className="size-4" />
+              <span>Call us</span>
+            </div>
+          </Button>
+        )}
       </div>
       <WidgetFooter />
     </>
