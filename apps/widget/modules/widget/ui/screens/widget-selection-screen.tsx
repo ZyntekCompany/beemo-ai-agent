@@ -94,7 +94,7 @@ export function WidgetSelectionScreen() {
             </div>
           </Button>
         )}
-        {hasVapiSecrets && widgetSettings?.vapiSettings.assistantId && (
+        {hasVapiSecrets && widgetSettings?.vapiSettings.phoneNumber && (
           <Button
             className="h-16 w-full justify-between"
             variant="outline"
