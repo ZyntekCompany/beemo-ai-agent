@@ -7,10 +7,11 @@ import {
   loadingMessageAtom,
   organizationIdAtom,
   screenAtom,
+  widgetSettingsAtom,
 } from "@/modules/widget/atoms/widget-atoms";
 import { WidgetHeader } from "@/modules/widget/ui/components/widget-header";
 import { useEffect, useState } from "react";
-import { useAction, useMutation } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
 
 type InitStep = "org" | "session" | "settings" | "vapi" | "done";
@@ -30,6 +31,7 @@ export function WidgetLoadingScreen({
   const setErrorMessage = useSetAtom(errorMessageAtom);
   const setOrganizationId = useSetAtom(organizationIdAtom);
   const setLoadingMessage = useSetAtom(loadingMessageAtom);
+  const setWidgetSettings = useSetAtom(widgetSettingsAtom);
 
   const contactSessionId = useAtomValue(
     contactSessionIdAtom(organizationId || "")
@@ -87,7 +89,7 @@ export function WidgetLoadingScreen({
 
     if (!contactSessionId) {
       setSessionValid(false);
-      setStep("done");
+      setStep("settings");
       return;
     }
 
@@ -98,11 +100,11 @@ export function WidgetLoadingScreen({
     })
       .then((result) => {
         setSessionValid(result.valid);
-        setStep("done");
+        setStep("settings");
       })
       .catch(() => {
         setSessionValid(false);
-        setStep("done");
+        setStep("settings");
       });
   }, [
     step,
@@ -112,6 +114,21 @@ export function WidgetLoadingScreen({
     validateContactSession,
     setLoadingMessage,
   ]);
+
+  const widgetSettings = useQuery(api.public.widgetSettings.getByOrganizationId, organizationId ? {
+    organizationId,
+  } : "skip")
+
+  useEffect(() => {
+    if (step !== "settings") return;
+
+    setLoadingMessage("Loading widget settings...");
+
+    if (widgetSettings !== undefined) {
+      setWidgetSettings(widgetSettings);
+      setStep("done")
+    }
+  }, [step, widgetSettings, setStep, setWidgetSettings, setLoadingMessage])
 
   useEffect(() => {
     if (step !== "done") return;
