@@ -32,7 +32,7 @@ export function WidgetVoiceScreen() {
         </div>
       </WidgetHeader>
       {transcript.length > 0 ? (
-        <AIConversation>
+        <AIConversation className='h-full'>
           <AIConversationContent>
             {transcript.map((message, index) => (
               <AIMessage from={message.role} key={`${message.role}-${index}-${message.text}`}>
@@ -75,7 +75,6 @@ export function WidgetVoiceScreen() {
           </div>
         </div>
       </div>
-      <WidgetFooter />
     </>
   )
 }
