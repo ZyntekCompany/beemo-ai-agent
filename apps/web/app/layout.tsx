@@ -69,6 +69,11 @@ export default function RootLayout({
         className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
       >
         <ClerkProvider
+          appearance={{
+            variables: {
+              colorPrimary: "#3C82F6"
+            }
+          }}
           localization={{
             ...esES,
             signIn: {
