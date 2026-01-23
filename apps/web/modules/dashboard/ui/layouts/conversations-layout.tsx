@@ -20,7 +20,7 @@ export function ConversationsLayout({
           <ConversationsPanel />
         </div>
       </ResizablePanel>
-      <ResizableHandle withHandle />
+      <ResizableHandle withHandle className="max-lg:hidden" />
       <ResizablePanel defaultSize={75} minSize={30}>
         <div className="flex h-full flex-col overflow-hidden">{children}</div>
       </ResizablePanel>
