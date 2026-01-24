@@ -70,38 +70,6 @@ export function ContactPanel() {
 
     return [
       {
-        id: "device-info",
-        icon: MonitorIcon,
-        title: "Device Information",
-        items: [
-          {
-            label: "Browser",
-            value: userAgentInfo.browser + (userAgentInfo.browserVersion ? ` ${userAgentInfo.browserVersion}` : ""),
-          },
-          {
-            label: "OS",
-            value: userAgentInfo.os + (userAgentInfo.osVersion ? ` ${userAgentInfo.osVersion}` : ""),
-          },
-          {
-            label: "Device",
-            value: userAgentInfo.device + (userAgentInfo.deviceModel ? ` - ${userAgentInfo.deviceModel}` : ""),
-            className: "capitalize"
-          },
-          {
-            label: "Screen",
-            value: contactSession.metadata.screenResolution,
-          },
-          {
-            label: "Viewport",
-            value: contactSession.metadata.viewportSize,
-          },
-          {
-            label: "Cookies",
-            value: contactSession.metadata.cookieEnabled ? "Enabled" : "Disabled",
-          }
-        ]
-      },
-      {
         id: "location-info",
         icon: GlobeIcon,
         title: "Location & Language",

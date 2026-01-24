@@ -18,9 +18,9 @@ const fontMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vera — Asistente IA para soporte al cliente",
+  title: "Beemo | Panel de Control",
   description:
-    "Vera automatiza el soporte al cliente: respuestas automáticas, clasificación de tickets, escalado y analíticas.",
+    "Beemo automatiza el soporte al cliente: respuestas automáticas, clasificación de tickets, escalado y analíticas.",
   keywords: [
     "asistente-ia",
     "soporte-al-cliente",
@@ -29,22 +29,22 @@ export const metadata: Metadata = {
     "NLP",
     "tickets",
   ],
-  authors: [{ name: "Equipo Vera", url: "mailto:soporte@vera.ai" }],
+  authors: [{ name: "Equipo Beemo", url: "mailto:soporte@beemo.ai" }],
   metadataBase: new URL("https://your-domain.example"),
   openGraph: {
-    title: "Vera — Asistente IA para soporte al cliente",
+    title: "Beemo | Panel de Control",
     description:
       "Automatiza respuestas, clasifica tickets y aporta analíticas para mejorar SLA y satisfacción.",
     url: "https://your-domain.example",
-    siteName: "Vera",
+    siteName: "Beemo",
     images: [
-      { url: "/web-app-manifest-512x512.png", alt: "Vera — asistente IA" },
+      { url: "/web-app-manifest-512x512.png", alt: "Beemo — asistente IA" },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Vera — Asistente IA para soporte al cliente",
+    title: "Beemo | Panel de Control",
     description:
       "Automatiza respuestas, clasifica tickets y mejora la experiencia del cliente.",
     images: ["/web-app-manifest-512x512.png"],

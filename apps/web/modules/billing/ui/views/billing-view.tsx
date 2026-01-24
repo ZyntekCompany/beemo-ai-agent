@@ -8,7 +8,7 @@ export function BillingView() {
       <div className="mx-auto w-full max-w-screen-md">
         <div className="space-y-2">
           <h1 className="text-2xl md:text-4xl">Plans & Billing</h1>
-          <p>Choose the plan that best fits your needs.</p>
+          <p className="text-muted-foreground">Choose the plan that best fits your needs.</p>
         </div>
 
         <div className="mt-8">

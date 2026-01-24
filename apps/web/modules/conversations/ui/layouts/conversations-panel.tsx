@@ -26,7 +26,7 @@ import { DicebearAvatar } from "@workspace/ui/components/dicebear-avatar";
 import { formatDistanceToNow } from "date-fns";
 import { ConversationStatusIcon } from "@workspace/ui/components/conversation-status-icon";
 import { useAtomValue, useSetAtom } from "jotai";
-import { statusFilterAtom } from "@/modules/dashboard/atoms";
+import { statusFilterAtom } from "@/modules/conversations/atoms";
 import { useInfiniteScroll } from "@workspace/ui/hooks/use-infinite-scroll";
 import { InfiniteScrollTrigger } from "@workspace/ui/components/infinite-scroll-trigger";
 import { Skeleton } from "@workspace/ui/components/skeleton";

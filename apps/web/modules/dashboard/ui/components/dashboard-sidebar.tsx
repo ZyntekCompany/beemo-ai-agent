@@ -20,12 +20,21 @@ import {
   LibraryBigIcon,
   Mic,
   PaletteIcon,
+  BarChart3Icon,
 } from "lucide-react";
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import { cn } from "@workspace/ui/lib/utils";
+
+const homeItems = [
+  {
+    title: "Dashboard",
+    url: "/",
+    icon: BarChart3Icon,
+  },
+]
 
 const custommerSupportItems = [
   {
@@ -107,6 +116,33 @@ export function DashboardSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
+        {/* Home */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Home</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {homeItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive(item.url)}
+                    className={cn(
+                      isActive(item.url) &&
+                      "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
+                    )}
+                    tooltip={item.title}
+                  >
+                    <Link href={item.url}>
+                      <item.icon className="size-4" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
         {/* Customer Support */}
         <SidebarGroup>
           <SidebarGroupLabel>Customer Support</SidebarGroupLabel>
@@ -119,7 +155,7 @@ export function DashboardSidebar() {
                     isActive={isActive(item.url)}
                     className={cn(
                       isActive(item.url) &&
-                        "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
+                      "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
                     )}
                     tooltip={item.title}
                   >
@@ -146,7 +182,7 @@ export function DashboardSidebar() {
                     isActive={isActive(item.url)}
                     className={cn(
                       isActive(item.url) &&
-                        "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
+                      "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
                     )}
                     tooltip={item.title}
                   >
@@ -173,7 +209,7 @@ export function DashboardSidebar() {
                     isActive={isActive(item.url)}
                     className={cn(
                       isActive(item.url) &&
-                        "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
+                      "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
                     )}
                     tooltip={item.title}
                   >
