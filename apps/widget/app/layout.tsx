@@ -15,9 +15,9 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Vera Widget — Asistente IA para soporte al cliente",
+  title: "Beemo Widget",
   description:
-    "Vera automatiza el soporte al cliente: respuestas automáticas, clasificación de tickets, escalado y analíticas.",
+    "Beemo automatiza el soporte al cliente: respuestas automáticas, clasificación de tickets, escalado y analíticas.",
   keywords: [
     "asistente-ia",
     "soporte-al-cliente",
@@ -29,19 +29,19 @@ export const metadata: Metadata = {
   authors: [{ name: "Equipo Zyntek", url: "jamesrgal@gmail.com" }],
   metadataBase: new URL("https://your-domain.example"),
   openGraph: {
-    title: "Vera — Asistente IA para soporte al cliente",
+    title: "Beemo Widget",
     description:
       "Automatiza respuestas, clasifica tickets y aporta analíticas para mejorar SLA y satisfacción.",
     url: "https://your-domain.example",
-    siteName: "Vera",
+    siteName: "Beemo",
     images: [
-      { url: "/web-app-manifest-512x512.png", alt: "Vera — asistente IA" },
+      { url: "/web-app-manifest-512x512.png", alt: "Beemo — asistente IA" },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Vera — Asistente IA para soporte al cliente",
+    title: "Beemo Widget",
     description:
       "Automatiza respuestas, clasifica tickets y mejora la experiencia del cliente.",
     images: ["/web-app-manifest-512x512.png"],

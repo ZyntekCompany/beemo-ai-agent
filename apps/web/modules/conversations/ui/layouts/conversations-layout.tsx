@@ -3,7 +3,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@workspace/ui/components/resizable";
-import { ConversationsPanel } from "@/modules/dashboard/ui/layouts/conversations-panel";
+import { ConversationsPanel } from "@/modules/conversations/ui/layouts/conversations-panel";
 
 export function ConversationsLayout({
   children,
