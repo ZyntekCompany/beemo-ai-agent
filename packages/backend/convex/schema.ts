@@ -23,7 +23,7 @@ export default defineSchema({
     .index("by_organization_id", ["organizationId"]),
   plugins: defineTable({
     organizationId: v.string(),
-    service: v.union(v.literal("vapi")),
+    service: v.union(v.literal("vapi"), v.literal("ycloud")),
     secretName: v.string(),
   })
     .index("by_organization_id", ["organizationId"])
@@ -65,7 +65,11 @@ export default defineSchema({
     ),
   })
     .index("by_organization_id", ["organizationId"])
-    .index("by_expires_at", ["expiresAt"]),
+    .index("by_expires_at", ["expiresAt"])
+    .index("by_organization_id_and_email", ["organizationId", "email"]),
+  ycloudProcessedEvents: defineTable({
+    eventId: v.string(),
+  }).index("by_event_id", ["eventId"]),
   users: defineTable({
     name: v.string(),
   }),

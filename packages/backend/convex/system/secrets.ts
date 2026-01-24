@@ -6,19 +6,24 @@ import { upsertSecret } from "../lib/secrets";
 export const upsert = internalAction({
   args: {
     organizationId: v.string(),
-    service: v.union(v.literal("vapi")),
+    service: v.union(v.literal("vapi"), v.literal("ycloud")),
     value: v.any()
   },
   handler: async (ctx, args) => {
-    const secretName = `tenant/${args.organizationId}/${args.service}`;
+    try {
+      const secretName = `tenant/${args.organizationId}/${args.service}`;
+      await upsertSecret(secretName, args.value);
 
-    await upsertSecret(secretName, args.value);
-
-    await ctx.runMutation(internal.system.plugins.upsert, {
-      service: args.service,
-      secretName,
-      organizationId: args.organizationId,
-    })
+      // Store only the secretName and service, all credentials go to AWS Secrets Manager
+      await ctx.runMutation(internal.system.plugins.upsert, {
+        service: args.service,
+        secretName,
+        organizationId: args.organizationId,
+      });
+    } catch (error) {
+      console.error("Error upserting secret:", error);
+      throw error;
+    }
 
     return { status: "success" };
   }

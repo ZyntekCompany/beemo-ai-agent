@@ -3,7 +3,7 @@ import { internalMutation, internalQuery } from "../_generated/server";
 
 export const upsert = internalMutation({
   args: {
-    service: v.union(v.literal("vapi")),
+    service: v.union(v.literal("vapi"), v.literal("ycloud")),
     secretName: v.string(),
     organizationId: v.string(),
   },
@@ -11,9 +11,16 @@ export const upsert = internalMutation({
     const existingPlugin = await ctx.db.query("plugins").withIndex("by_organization_id_and_service", (q) => q.eq("organizationId", args.organizationId).eq("service", args.service)).unique();
  
     if (existingPlugin) {
-      await ctx.db.patch(existingPlugin._id, { service: args.service, secretName: args.secretName });
+      await ctx.db.patch(existingPlugin._id, { 
+        service: args.service, 
+        secretName: args.secretName,
+      });
     } else {
-      await ctx.db.insert("plugins", { organizationId: args.organizationId, service: args.service, secretName: args.secretName });
+      await ctx.db.insert("plugins", { 
+        organizationId: args.organizationId, 
+        service: args.service, 
+        secretName: args.secretName,
+      });
     }
 
     return { status: "success" };
@@ -23,7 +30,7 @@ export const upsert = internalMutation({
 export const getByOrganizationIdAndService = internalQuery({
   args: {
     organizationId: v.string(),
-    service: v.union(v.literal("vapi")),
+    service: v.union(v.literal("vapi"), v.literal("ycloud")),
   },
   handler: async (ctx, args) => {
     return await ctx.db.query("plugins").withIndex("by_organization_id_and_service", (q) => q.eq("organizationId", args.organizationId).eq("service", args.service)).unique();

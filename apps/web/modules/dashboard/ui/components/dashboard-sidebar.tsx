@@ -21,6 +21,7 @@ import {
   Mic,
   PaletteIcon,
   BarChart3Icon,
+  MessageCircleIcon,
 } from "lucide-react";
 import React from "react";
 import Link from "next/link";
@@ -64,6 +65,11 @@ const configurationItems = [
     title: "Voice Assistant",
     url: "/plugins/vapi",
     icon: Mic,
+  },
+  {
+    title: "YCloud WhatsApp",
+    url: "/plugins/ycloud",
+    icon: MessageCircleIcon,
   },
 ];
 
