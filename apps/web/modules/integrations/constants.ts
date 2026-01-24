@@ -23,7 +23,7 @@ export const INTEGRATIONS = [
 
 export type IntegrationId = (typeof INTEGRATIONS)[number]["id"];
 
-export const HTML_SNIPPET = `<script data-organization-id="{{ORGANIZATION_ID}}"></script>`;
-export const REACT_SNIPPET = `<script data-organization-id="{{ORGANIZATION_ID}}"></script>`;
-export const NEXTJS_SNIPPET = `<script data-organization-id="{{ORGANIZATION_ID}}"></script>`;
-export const JAVASCRIPT_SNIPPET = `<script data-organization-id="{{ORGANIZATION_ID}}"></script>`;
+export const HTML_SNIPPET = `<script src="http://localhost:3001/widget.js" data-organization-id="{{ORGANIZATION_ID}}"></script>`;
+export const REACT_SNIPPET = `<script src="http://localhost:3001/widget.js" data-organization-id="{{ORGANIZATION_ID}}"></script>`;
+export const NEXTJS_SNIPPET = `<script src="http://localhost:3001/widget.js" data-organization-id="{{ORGANIZATION_ID}}"></script>`;
+export const JAVASCRIPT_SNIPPET = `<script src="http://localhost:3001/widget.js" data-organization-id="{{ORGANIZATION_ID}}"></script>`;
