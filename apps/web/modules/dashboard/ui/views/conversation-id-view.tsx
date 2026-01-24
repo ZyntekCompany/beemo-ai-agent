@@ -9,6 +9,7 @@ import { MoreHorizontalIcon, Wand2Icon } from "lucide-react";
 import z from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
 import {
   AIConversation,
   AIConversationContent,
@@ -35,6 +36,7 @@ import { useInfiniteScroll } from "@workspace/ui/hooks/use-infinite-scroll";
 import { InfiniteScrollTrigger } from "@workspace/ui/components/infinite-scroll-trigger";
 import { cn } from "@workspace/ui/lib/utils";
 import { Skeleton } from "@workspace/ui/components/skeleton";
+import { isSubscriptionError } from "@/lib/error-utils";
 
 const formSchema = z.object({
   message: z.string().min(1, "Message is required"),
@@ -80,7 +82,11 @@ export function ConversationIdView({
 
       form.setValue("message", response);
     } catch (error) {
-      console.log(error);
+      if (isSubscriptionError(error)) {
+        toast.error("Pro plan required for this feature");
+      } else {
+        console.log(error);
+      }
     } finally {
       setIsEnhancing(false);
     }
@@ -96,7 +102,11 @@ export function ConversationIdView({
 
       form.reset();
     } catch (error) {
-      console.log(error);
+      if (isSubscriptionError(error)) {
+        toast.error("Pro plan required for this feature");
+      } else {
+        console.log(error);
+      }
     }
   };
 
@@ -158,22 +168,25 @@ export function ConversationIdView({
             onLoadMore={handleLoadMore}
             ref={topElementRef}
           />
-          {toUIMessages(messages.results ?? []).map((message) => (
-            <AIMessage
-              key={message.id}
-              from={message.role === "user" ? "assistant" : "user"}
-            >
-              <AIMessageContent>
-                <AIResponse>{message.content}</AIResponse>
-              </AIMessageContent>
-              {message.role === "user" && (
-                <DicebearAvatar
-                  seed={conversation?.contactSessionId ?? "user"}
-                  size={32}
-                />
-              )}
-            </AIMessage>
-          ))}
+          {toUIMessages(messages.results ?? []).map((message) => {
+            const messageContent = (message as { content?: string; text?: string }).content ?? (message as { text?: string }).text ?? "";
+            return (
+              <AIMessage
+                key={message.id}
+                from={message.role === "user" ? "assistant" : "user"}
+              >
+                <AIMessageContent>
+                  <AIResponse>{messageContent}</AIResponse>
+                </AIMessageContent>
+                {message.role === "user" && (
+                  <DicebearAvatar
+                    seed={conversation?.contactSessionId ?? "user"}
+                    size={32}
+                  />
+                )}
+              </AIMessage>
+            );
+          })}
         </AIConversationContent>
         <AIConversationScrollButton />
       </AIConversation>
