@@ -77,6 +77,11 @@ export const create = action({
         prompt: args.prompt,
       });
     }
+
+    // Actualizar lastMessageAt de la conversación
+    await ctx.runMutation(internal.system.conversations.updateLastMessageAt, {
+      threadId: args.threadId,
+    });
   },
 });
 

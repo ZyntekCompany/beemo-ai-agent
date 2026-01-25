@@ -11,6 +11,7 @@ export default async function Page({
 
   return (
     <ConversationIdView
+      key={conversationId}
       conversationId={conversationId as Id<"conversations">}
     />
   );

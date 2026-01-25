@@ -26,6 +26,7 @@ import { usePathname } from "next/navigation";
 import { DicebearAvatar } from "@workspace/ui/components/dicebear-avatar";
 import { formatDistanceToNow } from "date-fns";
 import { ConversationStatusIcon } from "@workspace/ui/components/conversation-status-icon";
+import { formatMessageTime } from "@/lib/format-time";
 import { useAtomValue, useSetAtom } from "jotai";
 import {
   statusFilterAtom,
@@ -115,13 +116,22 @@ export function ConversationsPanel() {
         }
       >
         <TabsList className="grid w-full grid-cols-3 h-12 bg-transparent rounded-none border-b">
-          <TabsTrigger value="all" className="data-[state=active]:shadow-none data-[state=active]:bg-primary/10 data-[state=active]:text-primary ">
+          <TabsTrigger
+            value="all"
+            className="data-[state=active]:shadow-none data-[state=active]:bg-primary/10 data-[state=active]:text-primary "
+          >
             All
           </TabsTrigger>
-          <TabsTrigger value="whatsapp" className="data-[state=active]:shadow-none data-[state=active]:bg-primary/10 data-[state=active]:text-primary ">
+          <TabsTrigger
+            value="whatsapp"
+            className="data-[state=active]:shadow-none data-[state=active]:bg-primary/10 data-[state=active]:text-primary "
+          >
             WhatsApp
           </TabsTrigger>
-          <TabsTrigger value="widget" className="data-[state=active]:shadow-none data-[state=active]:bg-primary/10 data-[state=active]:text-primary ">
+          <TabsTrigger
+            value="widget"
+            className="data-[state=active]:shadow-none data-[state=active]:bg-primary/10 data-[state=active]:text-primary "
+          >
             Widget
           </TabsTrigger>
         </TabsList>
@@ -130,7 +140,7 @@ export function ConversationsPanel() {
       {isLoadingFirstPage ? (
         <SkeletonConversations />
       ) : (
-        <ScrollArea className="max-h-[calc(100vh-53px)]">
+        <ScrollArea className="max-h-[calc(100vh-101px)]">
           <div className="flex flex-1 w-full flex-col text-sm">
             {conversations.results.map((conversation) => {
               const isLastMessageFromOperator =
@@ -196,7 +206,16 @@ export function ConversationsPanel() {
                           {conversation.lastMessage?.text}
                         </span>
                       </div>
-                      <ConversationStatusIcon status={conversation.status} />
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {conversation.lastMessage?._creationTime && (
+                          <span className="text-[10px] text-muted-foreground">
+                            {formatMessageTime(
+                              conversation.lastMessage._creationTime,
+                            )}
+                          </span>
+                        )}
+                        <ConversationStatusIcon status={conversation.status} />
+                      </div>
                     </div>
                   </div>
                 </Link>

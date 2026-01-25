@@ -292,6 +292,11 @@ export const create = mutation({
       },
     });
 
+    // Actualizar lastMessageAt de la conversación
+    await ctx.db.patch(args.conversationId, {
+      lastMessageAt: Date.now(),
+    });
+
     // Si es una conversación de WhatsApp, enviar el mensaje a WhatsApp
     console.log("YCloud Dashboard: verificando tipo de conversación", {
       conversationId: args.conversationId,

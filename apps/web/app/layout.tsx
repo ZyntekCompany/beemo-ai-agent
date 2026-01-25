@@ -5,7 +5,7 @@ import "@workspace/ui/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Providers } from "@/components/providers";
 import { esES } from "@clerk/localizations";
-import { Toaster } from "react-hot-toast"
+import { Toaster } from "react-hot-toast";
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -77,8 +77,8 @@ export default function RootLayout({
         <ClerkProvider
           appearance={{
             variables: {
-              colorPrimary: "#3C82F6"
-            }
+              colorPrimary: "#3C82F6",
+            },
           }}
           localization={{
             ...esES,
@@ -94,7 +94,8 @@ export default function RootLayout({
         >
           <Providers>
             <Toaster position="top-center" />
-            {children}</Providers>
+            {children}
+          </Providers>
         </ClerkProvider>
       </body>
     </html>

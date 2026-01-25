@@ -166,6 +166,7 @@ export const getOrCreateConversation = internalMutation({
       type: "whatsapp",
       organizationId: args.organizationId,
       threadId,
+      lastMessageAt: Date.now(),
     });
 
     return { conversationId, threadId };
@@ -210,6 +211,7 @@ export const processInboundMessage = internalAction({
         internal.system.conversations.getByThreadId,
         { threadId },
       );
+
       if (!conversation) {
         console.error("YCloud: conversation not found after getOrCreate", {
           threadId,
@@ -227,6 +229,7 @@ export const processInboundMessage = internalAction({
       const isWhatsApp: boolean =
         contactSession?.email?.startsWith("whatsapp:") ?? false;
 
+        // TODO: Verificar si el usuario tiene una suscripción activa
       const shouldTriggerAgent: boolean = conversation.status === "unresolved";
 
       if (shouldTriggerAgent) {
@@ -323,6 +326,11 @@ export const processInboundMessage = internalAction({
           prompt: args.text,
         });
       }
+
+      // Actualizar lastMessageAt de la conversación
+      await ctx.runMutation(internal.system.conversations.updateLastMessageAt, {
+        threadId,
+      });
     } catch (err) {
       console.error("YCloud processInboundMessage ERROR", {
         eventId: args.eventId,

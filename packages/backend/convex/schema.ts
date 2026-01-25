@@ -38,11 +38,13 @@ export default defineSchema({
       v.literal("resolved"),
       v.literal("escalated")
     ),
+    lastMessageAt: v.optional(v.number()),
   })
     .index("by_organization_id", ["organizationId"])
     .index("by_contact_session_id", ["contactSessionId"])
     .index("by_thread_id", ["threadId"])
-    .index("by_status_and_organization_id", ["status", "organizationId"]),
+    .index("by_status_and_organization_id", ["status", "organizationId"])
+    .index("by_organization_id_and_last_message", ["organizationId", "lastMessageAt"]),
   contactSessions: defineTable({
     name: v.string(),
     email: v.string(),

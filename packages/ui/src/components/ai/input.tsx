@@ -43,12 +43,12 @@ const useAutoResizeTextarea = ({
       // Calculate new height
       const newHeight = Math.max(
         minHeight,
-        Math.min(textarea.scrollHeight, maxHeight ?? Number.POSITIVE_INFINITY)
+        Math.min(textarea.scrollHeight, maxHeight ?? Number.POSITIVE_INFINITY),
       );
 
       textarea.style.height = `${newHeight}px`;
     },
-    [minHeight, maxHeight]
+    [minHeight, maxHeight],
   );
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export const AIInput = ({ className, ...props }: AIInputProps) => (
   <form
     className={cn(
       "w-full divide-y overflow-hidden rounded-md border bg-background",
-      className
+      className,
     )}
     {...props}
   />
@@ -92,14 +92,17 @@ export const AIInputTextarea = ({
   placeholder = "What would you like to know?",
   minHeight = 48,
   maxHeight = 164,
+  ref,
   ...props
-}: AIInputTextareaProps) => {
+}: AIInputTextareaProps & { ref?: React.Ref<HTMLTextAreaElement> }) => {
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({
     minHeight,
     maxHeight,
   });
 
-  const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
+  const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (
+    e,
+  ) => {
     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       const form = e.currentTarget.form;
@@ -109,6 +112,28 @@ export const AIInputTextarea = ({
     }
   };
 
+  // Use a unified ref callback
+  const setRefs = React.useCallback(
+    (node: HTMLTextAreaElement | null) => {
+      // Update inner ref
+      if (textareaRef) {
+        (
+          textareaRef as React.MutableRefObject<HTMLTextAreaElement | null>
+        ).current = node;
+      }
+
+      // Update passed ref
+      if (!ref) return;
+      if (typeof ref === "function") {
+        ref(node);
+      } else {
+        (ref as React.MutableRefObject<HTMLTextAreaElement | null>).current =
+          node;
+      }
+    },
+    [ref, textareaRef],
+  );
+
   return (
     <Textarea
       className={cn(
@@ -116,7 +141,7 @@ export const AIInputTextarea = ({
         "w-full resize-none rounded-none border-none p-3 shadow-none outline-none ring-0",
         "bg-transparent dark:bg-transparent",
         "focus-visible:ring-0",
-        className
+        className,
       )}
       name="message"
       onChange={(e) => {
@@ -125,7 +150,7 @@ export const AIInputTextarea = ({
       }}
       onKeyDown={handleKeyDown}
       placeholder={placeholder}
-      ref={textareaRef}
+      ref={setRefs}
       {...props}
     />
   );
@@ -150,7 +175,7 @@ export const AIInputTools = ({ className, ...props }: AIInputToolsProps) => (
     className={cn(
       "flex items-center gap-1",
       "[&_button:first-child]:rounded-bl-xl",
-      className
+      className,
     )}
     {...props}
   />
@@ -173,7 +198,7 @@ export const AIInputButton = ({
         "shrink-0 gap-1.5 rounded-lg",
         variant === "ghost" && "text-muted-foreground",
         newSize === "default" && "px-3",
-        className
+        className,
       )}
       size={newSize}
       type="button"
@@ -236,7 +261,7 @@ export const AIInputModelSelectTrigger = ({
     className={cn(
       "border-none bg-transparent font-medium text-muted-foreground shadow-none transition-colors",
       'hover:bg-accent hover:text-foreground [&[aria-expanded="true"]]:bg-accent [&[aria-expanded="true"]]:text-foreground',
-      className
+      className,
     )}
     {...props}
   />
@@ -253,7 +278,9 @@ export const AIInputModelSelectContent = ({
   <SelectContent className={cn(className)} {...props} />
 );
 
-export type AIInputModelSelectItemProps = React.ComponentProps<typeof SelectItem>;
+export type AIInputModelSelectItemProps = React.ComponentProps<
+  typeof SelectItem
+>;
 
 export const AIInputModelSelectItem = ({
   className,
@@ -262,7 +289,9 @@ export const AIInputModelSelectItem = ({
   <SelectItem className={cn(className)} {...props} />
 );
 
-export type AIInputModelSelectValueProps = React.ComponentProps<typeof SelectValue>;
+export type AIInputModelSelectValueProps = React.ComponentProps<
+  typeof SelectValue
+>;
 
 export const AIInputModelSelectValue = ({
   className,

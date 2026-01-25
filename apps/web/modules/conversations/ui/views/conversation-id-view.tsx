@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { api } from "@workspace/backend/_generated/api";
 import { Id } from "@workspace/backend/_generated/dataModel";
 import { Button } from "@workspace/ui/components/button";
@@ -38,7 +38,7 @@ import { cn } from "@workspace/ui/lib/utils";
 import { Skeleton } from "@workspace/ui/components/skeleton";
 import { isSubscriptionError } from "@/lib/error-utils";
 import { Hint } from "@workspace/ui/components/hint";
-import Image from "next/image";
+import { formatMessageTime } from "@/lib/format-time";
 
 const formSchema = z.object({
   message: z.string().min(1, "Message is required"),
@@ -55,6 +55,10 @@ export function ConversationIdView({
       message: "",
     },
   });
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const isSubmitting = form.formState.isSubmitting;
 
   const conversation = useQuery(api.private.conversations.getOne, {
     conversationId,
@@ -74,6 +78,12 @@ export function ConversationIdView({
     });
 
   const [isEnhancing, setIsEnhancing] = useState(false);
+
+  useEffect(() => {
+    if (!isSubmitting && !isEnhancing) {
+      textareaRef.current?.focus();
+    }
+  }, [isSubmitting, isEnhancing]);
   const enhanceResponse = useAction(api.private.messages.enhanceResponse);
   const handleEnhanceResponse = async () => {
     setIsEnhancing(true);
@@ -148,7 +158,12 @@ export function ConversationIdView({
 
   return (
     <div className="flex flex-col h-full bg-muted">
-      <div className={cn("flex items-center justify-between border-b bg-background p-2.5", conversation.type === "widget" && "justify-end")}>
+      <div
+        className={cn(
+          "flex items-center justify-between border-b bg-background p-2.5",
+          conversation.type === "widget" && "justify-end",
+        )}
+      >
         {conversation.type === "whatsapp" && (
           <div className="flex items-center gap-3">
             <DicebearAvatar
@@ -157,8 +172,12 @@ export function ConversationIdView({
             />
 
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">{conversation.contactSession.name}</span>
-              <span className="text-xs text-muted-foreground bg-muted-foreground/10 px-2 py-1   rounded-sm">{conversation.contactSession.email.replace(/^whatsapp:/, "")}</span>
+              <span className="text-sm font-medium">
+                {conversation.contactSession.name}
+              </span>
+              <span className="text-xs text-muted-foreground bg-muted-foreground/10 px-2 py-1   rounded-sm">
+                {conversation.contactSession.email.replace(/^whatsapp:/, "")}
+              </span>
             </div>
           </div>
         )}
@@ -181,16 +200,49 @@ export function ConversationIdView({
             ref={topElementRef}
           />
           {toUIMessages(messages.results ?? []).map((message) => {
-            const messageContent = (message as { content?: string; text?: string }).content ?? (message as { text?: string }).text ?? "";
+            const messageContent =
+              (message as { content?: string; text?: string }).content ??
+              (message as { text?: string }).text ??
+              "";
+
+            const originalMessage = (messages.results ?? []).find(
+              (m: any) => m._id === message.id || m.id === message.id,
+            ) as any;
+
+            const isUserMessage = message.role === "user";
+
+            const formattedTime = formatMessageTime(
+              originalMessage?._creationTime,
+            );
+
             return (
               <AIMessage
                 key={message.id}
-                from={message.role === "user" ? "assistant" : "user"}
+                from={isUserMessage ? "assistant" : "user"}
               >
                 <AIMessageContent>
                   <AIResponse>{messageContent}</AIResponse>
+                  {formattedTime && (
+                    <div
+                      className={cn(
+                        "flex mt-0.5",
+                        isUserMessage ? "justify-start" : "justify-end",
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "text-[10px] font-medium",
+                          isUserMessage
+                            ? "text-muted-foreground"
+                            : "text-primary-foreground/70",
+                        )}
+                      >
+                        {formattedTime}
+                      </span>
+                    </div>
+                  )}
                 </AIMessageContent>
-                {message.role === "user" && (
+                {isUserMessage && (
                   <DicebearAvatar
                     seed={conversation?.contactSessionId ?? "user"}
                     size={32}
@@ -212,6 +264,8 @@ export function ConversationIdView({
               disabled={conversation?.status === "resolved"}
               render={({ field }) => (
                 <AIInputTextarea
+                  autoFocus
+                  ref={textareaRef}
                   disabled={
                     conversation?.status === "resolved" ||
                     form.formState.isSubmitting ||
@@ -279,7 +333,7 @@ export const ConversationIdViewLoading = () => {
           </Button>
         </Hint>
       </header>
-      <AIConversation className="max-h-[calc(100vh-180px)]">
+      <AIConversation>
         <AIConversationContent>
           {Array.from({ length: 8 }, (_, index) => {
             const isUser = index % 2 === 0;

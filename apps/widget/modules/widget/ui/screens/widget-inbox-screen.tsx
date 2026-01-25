@@ -23,7 +23,7 @@ export function WidgetInboxScreen() {
 
   const organizationId = useAtomValue(organizationIdAtom);
   const contactSessionId = useAtomValue(
-    contactSessionIdAtom(organizationId || "")
+    contactSessionIdAtom(organizationId || ""),
   );
 
   const conversations = usePaginatedQuery(
@@ -33,7 +33,7 @@ export function WidgetInboxScreen() {
           contactSessionId,
         }
       : "skip",
-    { initialNumItems: 10 }
+    { initialNumItems: 10 },
   );
 
   const { canLoadMore, isLoadingMore, handleLoadMore, topElementRef } =
@@ -57,7 +57,7 @@ export function WidgetInboxScreen() {
           <p>Inbox</p>
         </div>
       </WidgetHeader>
-      <div className="flex flex-1 flex-col gap-y-4 p-4">
+      <div className="flex flex-1 flex-col gap-y-4 p-4 overflow-y-auto">
         {conversations.results.length > 0 &&
           conversations.results.map((conversation) => (
             <Button

@@ -60,3 +60,23 @@ export const getByThreadId = internalQuery({
     return conversation;
   },
 });
+
+export const updateLastMessageAt = internalMutation({
+  args: {
+    threadId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const conversation = await ctx.db
+      .query("conversations")
+      .withIndex("by_thread_id", (q) => q.eq("threadId", args.threadId))
+      .unique();
+
+    if (!conversation) {
+      return;
+    }
+
+    await ctx.db.patch(conversation._id, {
+      lastMessageAt: Date.now(),
+    });
+  },
+});

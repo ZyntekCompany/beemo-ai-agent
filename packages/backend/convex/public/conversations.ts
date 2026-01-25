@@ -141,6 +141,7 @@ export const create = mutation({
       status: "unresolved",
       organizationId: args.organizationId,
       threadId,
+      lastMessageAt: Date.now(),
     });
 
     return conversationId;

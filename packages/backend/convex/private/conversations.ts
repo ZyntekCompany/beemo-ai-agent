@@ -148,38 +148,45 @@ export const getMany = query({
 
     let conversations: PaginationResult<Doc<"conversations">>;
 
+    // Usar el nuevo índice para ordenar por lastMessageAt
     if (args.status && args.type) {
       conversations = await ctx.db
         .query("conversations")
-        .withIndex("by_status_and_organization_id", (q) =>
-          q
-            .eq("status", args.status as Doc<"conversations">["status"])
-            .eq("organizationId", orgId),
+        .withIndex("by_organization_id_and_last_message", (q) =>
+          q.eq("organizationId", orgId)
         )
-        .filter((q) => q.eq(q.field("type"), args.type))
+        .filter((q) => 
+          q.and(
+            q.eq(q.field("status"), args.status),
+            q.eq(q.field("type"), args.type)
+          )
+        )
         .order("desc")
         .paginate(args.paginationOpts);
     } else if (args.status) {
       conversations = await ctx.db
         .query("conversations")
-        .withIndex("by_status_and_organization_id", (q) =>
-          q
-            .eq("status", args.status as Doc<"conversations">["status"])
-            .eq("organizationId", orgId),
+        .withIndex("by_organization_id_and_last_message", (q) =>
+          q.eq("organizationId", orgId)
         )
+        .filter((q) => q.eq(q.field("status"), args.status))
         .order("desc")
         .paginate(args.paginationOpts);
     } else if (args.type) {
       conversations = await ctx.db
         .query("conversations")
-        .withIndex("by_organization_id", (q) => q.eq("organizationId", orgId))
+        .withIndex("by_organization_id_and_last_message", (q) =>
+          q.eq("organizationId", orgId)
+        )
         .filter((q) => q.eq(q.field("type"), args.type))
         .order("desc")
         .paginate(args.paginationOpts);
     } else {
       conversations = await ctx.db
         .query("conversations")
-        .withIndex("by_organization_id", (q) => q.eq("organizationId", orgId))
+        .withIndex("by_organization_id_and_last_message", (q) =>
+          q.eq("organizationId", orgId)
+        )
         .order("desc")
         .paginate(args.paginationOpts);
     }
