@@ -150,7 +150,7 @@ export const getOrCreateConversation = internalMutation({
 
     const greetMessage =
       widgetSettings?.greetMessage ??
-      "¡Hola! Soy Vera, su asistente virtual. ¿En qué puedo ayudarle el día de hoy? ✨";
+      "¡Hola! Soy Beemo, su asistente virtual. ¿En qué puedo ayudarle el día de hoy? ✨";
 
     await saveMessage(ctx, components.agent, {
       threadId,
@@ -163,6 +163,7 @@ export const getOrCreateConversation = internalMutation({
     const conversationId = await ctx.db.insert("conversations", {
       contactSessionId: args.contactSessionId,
       status: "unresolved",
+      type: "whatsapp",
       organizationId: args.organizationId,
       threadId,
     });
@@ -331,6 +332,52 @@ export const processInboundMessage = internalAction({
         stack: err instanceof Error ? err.stack : undefined,
       });
       throw err;
+    }
+  },
+});
+
+/**
+ * Wrapper para enviar mensajes desde mutations usando scheduler.
+ * Esta función maneja los errores y los registra correctamente.
+ */
+export const sendWhatsAppMessageFromMutation = internalAction({
+  args: {
+    organizationId: v.string(),
+    to: v.string(),
+    text: v.string(),
+    conversationId: v.optional(v.id("conversations")),
+  },
+  handler: async (ctx, args): Promise<void> => {
+    console.log("YCloud Wrapper: iniciando envío a WhatsApp", {
+      conversationId: args.conversationId,
+      phone: args.to,
+      organizationId: args.organizationId,
+      textLength: args.text.length,
+    });
+
+    try {
+      const result = await ctx.runAction(internal.system.ycloud.sendWhatsAppMessage, {
+        organizationId: args.organizationId,
+        to: args.to,
+        text: args.text,
+        sendDirectly: false,
+      });
+      
+      console.log("YCloud Wrapper: mensaje enviado exitosamente", {
+        conversationId: args.conversationId,
+        phone: args.to,
+        messageId: result?.id,
+        status: result?.status,
+      });
+    } catch (error) {
+      console.error("YCloud Wrapper: ERROR al enviar mensaje", {
+        conversationId: args.conversationId,
+        phone: args.to,
+        organizationId: args.organizationId,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      });
+      throw error;
     }
   },
 });

@@ -34,7 +34,7 @@ export function PluginCard({ isDisabled, serviceName, serviceImage, features, on
       </div>
 
       <div className="mb-6 text-center">
-        <p className="text-lg">Connect your {serviceName} account to Vera AI</p>
+        <p className="text-lg">Connect your {serviceName} account to Beemo AI</p>
       </div>
 
       <div className="mb-8">

@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select";
+import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import {
   ArrowRightIcon,
@@ -26,7 +27,10 @@ import { DicebearAvatar } from "@workspace/ui/components/dicebear-avatar";
 import { formatDistanceToNow } from "date-fns";
 import { ConversationStatusIcon } from "@workspace/ui/components/conversation-status-icon";
 import { useAtomValue, useSetAtom } from "jotai";
-import { statusFilterAtom } from "@/modules/conversations/atoms";
+import {
+  statusFilterAtom,
+  typeFilterAtom,
+} from "@/modules/conversations/atoms";
 import { useInfiniteScroll } from "@workspace/ui/hooks/use-infinite-scroll";
 import { InfiniteScrollTrigger } from "@workspace/ui/components/infinite-scroll-trigger";
 import { Skeleton } from "@workspace/ui/components/skeleton";
@@ -37,10 +41,16 @@ export function ConversationsPanel() {
   const statusFilter = useAtomValue(statusFilterAtom);
   const setStatusFilter = useSetAtom(statusFilterAtom);
 
+  const typeFilter = useAtomValue(typeFilterAtom);
+  const setTypeFilter = useSetAtom(typeFilterAtom);
+
   const conversations = usePaginatedQuery(
     api.private.conversations.getMany,
-    { status: statusFilter === "all" ? undefined : statusFilter },
-    { initialNumItems: 10 }
+    {
+      status: statusFilter === "all" ? undefined : statusFilter,
+      type: typeFilter === "all" ? undefined : typeFilter,
+    },
+    { initialNumItems: 10 },
   );
 
   const {
@@ -62,7 +72,7 @@ export function ConversationsPanel() {
           defaultValue="all"
           onValueChange={(value) =>
             setStatusFilter(
-              value as "all" | "unresolved" | "escalated" | "resolved"
+              value as "all" | "unresolved" | "escalated" | "resolved",
             )
           }
           value={statusFilter}
@@ -98,6 +108,25 @@ export function ConversationsPanel() {
           </SelectContent>
         </Select>
       </div>
+      <Tabs
+        value={typeFilter}
+        onValueChange={(value) =>
+          setTypeFilter(value as "all" | "whatsapp" | "widget")
+        }
+      >
+        <TabsList className="grid w-full grid-cols-3 h-12 bg-transparent rounded-none border-b">
+          <TabsTrigger value="all" className="data-[state=active]:shadow-none data-[state=active]:bg-primary/10 data-[state=active]:text-primary ">
+            All
+          </TabsTrigger>
+          <TabsTrigger value="whatsapp" className="data-[state=active]:shadow-none data-[state=active]:bg-primary/10 data-[state=active]:text-primary ">
+            WhatsApp
+          </TabsTrigger>
+          <TabsTrigger value="widget" className="data-[state=active]:shadow-none data-[state=active]:bg-primary/10 data-[state=active]:text-primary ">
+            Widget
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
+
       {isLoadingFirstPage ? (
         <SkeletonConversations />
       ) : (
@@ -108,7 +137,7 @@ export function ConversationsPanel() {
                 conversation.lastMessage?.message?.role !== "user";
 
               const country = getCountryFromTimezone(
-                conversation.contactSession.metadata?.timezone as string
+                conversation.contactSession.metadata?.timezone as string,
               );
 
               const countryFlagUrl = country?.code
@@ -121,7 +150,7 @@ export function ConversationsPanel() {
                   className={cn(
                     "relative flex cursor-pointer items-start gap-3 border-b p-4 py-5 text-sm leading-tight hover:bg-accent hover:text-accent-foreground",
                     pathname === `/conversations/${conversation._id}` &&
-                      "bg-accent text-accent-foreground"
+                      "bg-accent text-accent-foreground",
                   )}
                   href={`/conversations/${conversation._id}`}
                 >
@@ -130,13 +159,17 @@ export function ConversationsPanel() {
                       "-translate-y-1/2 absolute top-1/2 left-0 h-[64%] w-1 rounded-br-full rounded-tr-full bg-primary transition-all duration-300 ease-in-out origin-center",
                       pathname === `/conversations/${conversation._id}`
                         ? "scale-y-100 opacity-100"
-                        : "scale-y-0 opacity-0"
+                        : "scale-y-0 opacity-0",
                     )}
                   />
                   <DicebearAvatar
                     seed={conversation.contactSession._id}
                     size={35}
-                    badgeImageUrl={countryFlagUrl}
+                    badgeImageUrl={
+                      conversation.type === "whatsapp"
+                        ? "/icons/whatsapp.svg"
+                        : countryFlagUrl
+                    }
                     className="shrink-0"
                   />
                   <div className="flex-1">
@@ -156,7 +189,8 @@ export function ConversationsPanel() {
                         <span
                           className={cn(
                             "line-clamp-1 text-muted-foreground text-xs",
-                            !isLastMessageFromOperator && "font-bold text-black"
+                            !isLastMessageFromOperator &&
+                              "font-bold text-black",
                           )}
                         >
                           {conversation.lastMessage?.text}

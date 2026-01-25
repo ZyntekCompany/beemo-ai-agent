@@ -28,7 +28,7 @@ export function CustomizationForm({ initialData, hasVapiPlugin }: CustomizationF
   const form = useForm<FormSchema>({
     resolver: zodResolver(widgetSettingsFormSchema),
     defaultValues: {
-      greetMessage: initialData?.greetMessage || "¡Hola! Soy Vera, su asistente virtual. ¿En qué puedo ayudarle el día de hoy? ✨",
+      greetMessage: initialData?.greetMessage || "¡Hola! Soy Beemo, su asistente virtual. ¿En qué puedo ayudarle el día de hoy? ✨",
       defaultSuggestions: {
         suggestion1: initialData?.defaultSuggestions?.suggestion1 || "",
         suggestion2: initialData?.defaultSuggestions?.suggestion2 || "",

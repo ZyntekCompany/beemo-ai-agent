@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@workspace/ui/lib/utils";
@@ -11,6 +12,7 @@ type KPICardProps = {
   value: string | number;
   description?: string;
   icon?: LucideIcon;
+  imageSrc?: string;
   iconTheme?: IconTheme;
   trend?: {
     value: number;
@@ -43,6 +45,7 @@ export function KPICard({
   value,
   description,
   icon: Icon,
+  imageSrc,
   iconTheme = "blue",
   trend,
   className,
@@ -59,6 +62,11 @@ export function KPICard({
           {Icon && (
             <div className={cn("flex-shrink-0 size-6 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center", theme.bg)}>
               <Icon className={cn("h-4 w-4 sm:h-5 sm:w-5", theme.icon)} />
+            </div>
+          )}
+          {imageSrc && !Icon && (
+            <div className={cn("flex-shrink-0 size-6 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center", theme.bg)}>
+              <Image src={imageSrc} alt={title} width={20} height={20} className="h-4 w-4 sm:h-7 sm:w-7" />
             </div>
           )}
         </div>

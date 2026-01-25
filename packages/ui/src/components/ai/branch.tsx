@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import type { HTMLAttributes, ReactElement, ReactNode } from "react";
+import * as React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Button } from "@workspace/ui/components/button";
 import { cn } from "@workspace/ui/lib/utils";
@@ -11,8 +11,8 @@ type AIBranchContextType = {
   totalBranches: number;
   goToPrevious: () => void;
   goToNext: () => void;
-  branches: ReactElement[];
-  setBranches: (branches: ReactElement[]) => void;
+  branches: React.ReactElement[];
+  setBranches: (branches: React.ReactElement[]) => void;
 };
 
 const AIBranchContext = createContext<AIBranchContextType | null>(null);
@@ -27,7 +27,7 @@ const useAIBranch = () => {
   return context;
 };
 
-export type AIBranchProps = HTMLAttributes<HTMLDivElement> & {
+export type AIBranchProps = React.ComponentProps<"div"> & {
   defaultBranch?: number;
   onBranchChange?: (branchIndex: number) => void;
 };
@@ -39,7 +39,7 @@ export const AIBranch = ({
   ...props
 }: AIBranchProps) => {
   const [currentBranch, setCurrentBranch] = useState(defaultBranch);
-  const [branches, setBranches] = useState<ReactElement[]>([]);
+  const [branches, setBranches] = useState<React.ReactElement[]>([]);
 
   const handleBranchChange = (newBranch: number) => {
     setCurrentBranch(newBranch);
@@ -78,7 +78,7 @@ export const AIBranch = ({
 };
 
 export type AIBranchMessagesProps = {
-  children: ReactElement | ReactElement[];
+  children: React.ReactElement | React.ReactElement[];
 };
 
 export const AIBranchMessages = ({ children }: AIBranchMessagesProps) => {
@@ -105,7 +105,7 @@ export const AIBranchMessages = ({ children }: AIBranchMessagesProps) => {
   ));
 };
 
-export type AIBranchSelectorProps = HTMLAttributes<HTMLDivElement> & {
+export type AIBranchSelectorProps = React.ComponentProps<"div"> & {
   from: "user" | "assistant";
 };
 
@@ -135,7 +135,7 @@ export const AIBranchSelector = ({
 
 export type AIBranchPreviousProps = {
   className?: string;
-  children?: ReactNode;
+  children?: React.ReactNode;
 };
 
 export const AIBranchPrevious = ({
@@ -166,7 +166,7 @@ export const AIBranchPrevious = ({
 
 export type AIBranchNextProps = {
   className?: string;
-  children?: ReactNode;
+  children?: React.ReactNode;
 };
 
 export const AIBranchNext = ({ className, children }: AIBranchNextProps) => {

@@ -5,7 +5,7 @@ import { api } from "@workspace/backend/_generated/api";
 import { Id } from "@workspace/backend/_generated/dataModel";
 import { Button } from "@workspace/ui/components/button";
 import { useAction, useMutation, useQuery } from "convex/react";
-import { MoreHorizontalIcon, Wand2Icon } from "lucide-react";
+import { Wand2Icon } from "lucide-react";
 import z from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,6 +37,8 @@ import { InfiniteScrollTrigger } from "@workspace/ui/components/infinite-scroll-
 import { cn } from "@workspace/ui/lib/utils";
 import { Skeleton } from "@workspace/ui/components/skeleton";
 import { isSubscriptionError } from "@/lib/error-utils";
+import { Hint } from "@workspace/ui/components/hint";
+import Image from "next/image";
 
 const formSchema = z.object({
   message: z.string().min(1, "Message is required"),
@@ -146,10 +148,20 @@ export function ConversationIdView({
 
   return (
     <div className="flex flex-col h-full bg-muted">
-      <div className="flex items-center justify-between border-b bg-background p-2.5">
-        <Button size="sm" variant="ghost">
-          <MoreHorizontalIcon />
-        </Button>
+      <div className={cn("flex items-center justify-between border-b bg-background p-2.5", conversation.type === "widget" && "justify-end")}>
+        {conversation.type === "whatsapp" && (
+          <div className="flex items-center gap-3">
+            <DicebearAvatar
+              seed={conversation?.contactSessionId ?? "whatsapp"}
+              size={32}
+            />
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">{conversation.contactSession.name}</span>
+              <span className="text-xs text-muted-foreground bg-muted-foreground/10 px-2 py-1   rounded-sm">{conversation.contactSession.email.replace(/^whatsapp:/, "")}</span>
+            </div>
+          </div>
+        )}
 
         {!!conversation && (
           <ConversationStatusButton
@@ -256,10 +268,16 @@ export function ConversationIdView({
 export const ConversationIdViewLoading = () => {
   return (
     <div className="flex h-full flex-col bg-muted">
-      <header className="flex items-center justify-between border-b bg-background p-2.5">
-        <Button disabled size="sm" variant="ghost">
-          <MoreHorizontalIcon />
-        </Button>
+      <header className="flex items-center justify-end border-b bg-background p-2.5">
+        <Hint text="Loading...">
+          <Button
+            disabled
+            size="sm"
+            className="bg-neutral-200 text-neutral-800"
+          >
+            Loading...
+          </Button>
+        </Hint>
       </header>
       <AIConversation className="max-h-[calc(100vh-180px)]">
         <AIConversationContent>

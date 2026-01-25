@@ -293,42 +293,46 @@ export const create = mutation({
     });
 
     // Si es una conversación de WhatsApp, enviar el mensaje a WhatsApp
-    // Usar scheduler para ejecutar en background (no bloquear la respuesta)
-    try {
+    console.log("YCloud Dashboard: verificando tipo de conversación", {
+      conversationId: args.conversationId,
+      conversationType: conversation.type,
+      contactSessionId: conversation.contactSessionId,
+    });
+
+    if (conversation.type === "whatsapp") {
       const contactSession = await ctx.db.get(conversation.contactSessionId);
       
+      console.log("YCloud Dashboard: contactSession obtenido", {
+        conversationId: args.conversationId,
+        hasContactSession: !!contactSession,
+        email: contactSession?.email,
+      });
+      
       if (contactSession?.email?.startsWith("whatsapp:")) {
-        // Extraer el número de teléfono del email (formato: "whatsapp:+573181833248")
         const phoneNumber = contactSession.email.replace(/^whatsapp:/, "");
         
-        console.log("YCloud: intentando enviar mensaje manual a WhatsApp", {
+        console.log("YCloud Dashboard: programando envío a WhatsApp", {
           phone: phoneNumber,
           conversationId: args.conversationId,
           organizationId: conversation.organizationId,
-          messageLength: args.prompt.length,
+          textLength: args.prompt.length,
         });
         
-        // Enviar el mensaje a WhatsApp usando YCloud (en background)
-        ctx.scheduler.runAfter(0, internal.system.ycloud.sendWhatsAppMessage, {
+        // Programar envío en background
+        await ctx.scheduler.runAfter(0, internal.system.ycloud.sendWhatsAppMessageFromMutation, {
           organizationId: conversation.organizationId,
           to: phoneNumber,
           text: args.prompt,
-          sendDirectly: false, // Usar cola asíncrona
-        }).catch((schedulerError) => {
-          console.error("YCloud: error al programar envío a WhatsApp", {
-            conversationId: args.conversationId,
-            error: schedulerError instanceof Error ? schedulerError.message : String(schedulerError),
-          });
+          conversationId: args.conversationId,
+        });
+        
+        console.log("YCloud Dashboard: envío programado exitosamente");
+      } else {
+        console.error("YCloud Dashboard: email no tiene formato WhatsApp", {
+          conversationId: args.conversationId,
+          email: contactSession?.email,
         });
       }
-    } catch (whatsappError) {
-      // No lanzar el error para no interrumpir el guardado del mensaje
-      // Solo loggear el error
-      console.error("YCloud: error al preparar envío manual a WhatsApp", {
-        conversationId: args.conversationId,
-        error: whatsappError instanceof Error ? whatsappError.message : String(whatsappError),
-        stack: whatsappError instanceof Error ? whatsappError.stack : undefined,
-      });
     }
   },
 });

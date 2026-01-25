@@ -120,6 +120,12 @@ export const getMany = query({
         v.literal("resolved"),
       ),
     ),
+    type: v.optional(
+      v.union(
+        v.literal("whatsapp"),
+        v.literal("widget"),
+      ),
+    ),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -142,7 +148,7 @@ export const getMany = query({
 
     let conversations: PaginationResult<Doc<"conversations">>;
 
-    if (args.status) {
+    if (args.status && args.type) {
       conversations = await ctx.db
         .query("conversations")
         .withIndex("by_status_and_organization_id", (q) =>
@@ -150,6 +156,24 @@ export const getMany = query({
             .eq("status", args.status as Doc<"conversations">["status"])
             .eq("organizationId", orgId),
         )
+        .filter((q) => q.eq(q.field("type"), args.type))
+        .order("desc")
+        .paginate(args.paginationOpts);
+    } else if (args.status) {
+      conversations = await ctx.db
+        .query("conversations")
+        .withIndex("by_status_and_organization_id", (q) =>
+          q
+            .eq("status", args.status as Doc<"conversations">["status"])
+            .eq("organizationId", orgId),
+        )
+        .order("desc")
+        .paginate(args.paginationOpts);
+    } else if (args.type) {
+      conversations = await ctx.db
+        .query("conversations")
+        .withIndex("by_organization_id", (q) => q.eq("organizationId", orgId))
+        .filter((q) => q.eq(q.field("type"), args.type))
         .order("desc")
         .paginate(args.paginationOpts);
     } else {
