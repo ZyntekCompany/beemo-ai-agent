@@ -134,13 +134,15 @@ export function WidgetChatScreen() {
             ref={topElementRef}
           />
           {toUIMessages(messages.results ?? [])?.map((message) => {
+            const messageContent = (message as { content?: string; text?: string }).content ?? (message as { text?: string }).text ?? "";
+
             return (
               <AIMessage
                 from={message.role === "user" ? "user" : "assistant"}
                 key={message.id}
               >
                 <AIMessageContent>
-                  <AIResponse>{message.content}</AIResponse>
+                  <AIResponse>{messageContent}</AIResponse>
                 </AIMessageContent>
                 {message.role === "assistant" && (
                   <DicebearAvatar

@@ -1,11 +1,7 @@
 "use client";
 
 import { Loader2Icon, SendIcon, SquareIcon, XIcon } from "lucide-react";
-import type {
-  ComponentProps,
-  HTMLAttributes,
-  KeyboardEventHandler,
-} from "react";
+import * as React from "react";
 import { Children, useCallback, useEffect, useRef } from "react";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -73,7 +69,7 @@ const useAutoResizeTextarea = ({
   return { textareaRef, adjustHeight };
 };
 
-export type AIInputProps = HTMLAttributes<HTMLFormElement>;
+export type AIInputProps = React.ComponentProps<"form">;
 
 export const AIInput = ({ className, ...props }: AIInputProps) => (
   <form
@@ -85,7 +81,7 @@ export const AIInput = ({ className, ...props }: AIInputProps) => (
   />
 );
 
-export type AIInputTextareaProps = ComponentProps<typeof Textarea> & {
+export type AIInputTextareaProps = React.ComponentProps<typeof Textarea> & {
   minHeight?: number;
   maxHeight?: number;
 };
@@ -103,7 +99,7 @@ export const AIInputTextarea = ({
     maxHeight,
   });
 
-  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
+  const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       const form = e.currentTarget.form;
@@ -135,7 +131,7 @@ export const AIInputTextarea = ({
   );
 };
 
-export type AIInputToolbarProps = HTMLAttributes<HTMLDivElement>;
+export type AIInputToolbarProps = React.ComponentProps<"div">;
 
 export const AIInputToolbar = ({
   className,
@@ -147,7 +143,7 @@ export const AIInputToolbar = ({
   />
 );
 
-export type AIInputToolsProps = HTMLAttributes<HTMLDivElement>;
+export type AIInputToolsProps = React.ComponentProps<"div">;
 
 export const AIInputTools = ({ className, ...props }: AIInputToolsProps) => (
   <div
@@ -160,7 +156,7 @@ export const AIInputTools = ({ className, ...props }: AIInputToolsProps) => (
   />
 );
 
-export type AIInputButtonProps = ComponentProps<typeof Button>;
+export type AIInputButtonProps = React.ComponentProps<typeof Button>;
 
 export const AIInputButton = ({
   variant = "ghost",
@@ -187,7 +183,7 @@ export const AIInputButton = ({
   );
 };
 
-export type AIInputSubmitProps = ComponentProps<typeof Button> & {
+export type AIInputSubmitProps = React.ComponentProps<typeof Button> & {
   status?: "submitted" | "streaming" | "ready" | "error";
 };
 
@@ -222,13 +218,13 @@ export const AIInputSubmit = ({
   );
 };
 
-export type AIInputModelSelectProps = ComponentProps<typeof Select>;
+export type AIInputModelSelectProps = React.ComponentProps<typeof Select>;
 
 export const AIInputModelSelect = (props: AIInputModelSelectProps) => (
   <Select {...props} />
 );
 
-export type AIInputModelSelectTriggerProps = ComponentProps<
+export type AIInputModelSelectTriggerProps = React.ComponentProps<
   typeof SelectTrigger
 >;
 
@@ -246,7 +242,7 @@ export const AIInputModelSelectTrigger = ({
   />
 );
 
-export type AIInputModelSelectContentProps = ComponentProps<
+export type AIInputModelSelectContentProps = React.ComponentProps<
   typeof SelectContent
 >;
 
@@ -257,7 +253,7 @@ export const AIInputModelSelectContent = ({
   <SelectContent className={cn(className)} {...props} />
 );
 
-export type AIInputModelSelectItemProps = ComponentProps<typeof SelectItem>;
+export type AIInputModelSelectItemProps = React.ComponentProps<typeof SelectItem>;
 
 export const AIInputModelSelectItem = ({
   className,
@@ -266,7 +262,7 @@ export const AIInputModelSelectItem = ({
   <SelectItem className={cn(className)} {...props} />
 );
 
-export type AIInputModelSelectValueProps = ComponentProps<typeof SelectValue>;
+export type AIInputModelSelectValueProps = React.ComponentProps<typeof SelectValue>;
 
 export const AIInputModelSelectValue = ({
   className,

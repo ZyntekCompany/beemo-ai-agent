@@ -80,7 +80,7 @@ export function StatusDistributionChart({ data }: StatusDistributionChartProps) 
         </div>
 
         {/* Chart - Right side on large screens */}
-        <div className="flex-1 lg:flex-shrink-0 lg:w-80 min-w-0 w-full bg-muted py-4 rounded-xl">
+        <div className="flex-1 lg:flex-shrink-0 lg:w-80 min-w-0 w-full bg-muted py-4 rounded-xl border">
           <ChartContainer config={chartConfig} className="h-[260px] w-full">
             <PieChart>
               <ChartTooltip

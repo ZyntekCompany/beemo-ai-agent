@@ -10,12 +10,14 @@ import {
   CheckCircle2,
   Clock,
   TrendingUp,
-  Users,
-  UserCheck,
+  MessageCircle,
+  Download,
 } from "lucide-react";
 import { Skeleton } from "@workspace/ui/components/skeleton";
 import { Card, CardContent } from "@workspace/ui/components/card";
+import { Button } from "@workspace/ui/components/button";
 import { useUser } from "@clerk/nextjs";
+import { exportAnalyticsToExcel } from "@/modules/dashboard/lib/export-analytics";
 
 export function DashboardView() {
   const stats = useQuery(api.private.analytics.getStats);
@@ -61,9 +63,19 @@ export function DashboardView() {
   return (
     <div className="flex min-h-screen flex-col bg-muted p-4 sm:p-6 md:p-8">
       <div className="mx-auto w-full max-w-screen-lg space-y-6 overflow-x-hidden">
-        <div className="space-y-2">
-          <h1 className="text-2xl md:text-4xl">Welcome, {user?.user?.firstName}</h1>
-          <p className="text-muted-foreground">Here you can see your statistics and insights.</p>
+        <div className="flex items-center justify-between gap-4">
+          <div className="space-y-2">
+            <h1 className="text-2xl md:text-4xl">Welcome, {user?.user?.firstName}</h1>
+            <p className="text-muted-foreground">Here you can see your statistics and insights.</p>
+          </div>
+          <Button
+            onClick={() => exportAnalyticsToExcel(stats, user?.user?.organizationMemberships?.[0]?.organization?.name)}
+            variant="tertiary"
+            className="gap-2"
+          >
+            <Download className="h-4 w-4" />
+            <span className="hidden sm:inline">Export Excel</span>
+          </Button>
         </div>
 
         <div className="mt-8 space-y-4">
@@ -99,21 +111,21 @@ export function DashboardView() {
             />
           </div>
 
-          {/* Contact Stats */}
+          {/* Conversations by Type */}
           <div className="grid grid-cols-2 gap-4">
             <KPICard
-              title="Total Contacts"
-              value={stats.kpis.totalContacts}
-              description="Registered contacts"
-              icon={Users}
-              iconTheme="blue"
+              title="WhatsApp"
+              value={stats.kpis.whatsappConversations}
+              description="WhatsApp conversations"
+              imageSrc="/icons/whatsapp.svg"
+              iconTheme="green"
             />
             <KPICard
-              title="Active Contacts"
-              value={stats.kpis.activeContacts}
-              description="Active sessions"
-              icon={UserCheck}
-              iconTheme="green"
+              title="Widget"
+              value={stats.kpis.widgetConversations}
+              description="Widget conversations"
+              icon={MessageCircle}
+              iconTheme="blue"
             />
           </div>
         </div>

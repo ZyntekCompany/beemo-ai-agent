@@ -131,12 +131,13 @@ export const create = mutation({
       message: {
         role: "assistant",
         content: widgetSettings?.greetMessage ||
-          "¡Hola! Soy Vera, su asistente virtual. ¿En qué puedo ayudarle el día de hoy? ✨",
+          "¡Hola! Soy Beemo, su asistente virtual. ¿En qué puedo ayudarle el día de hoy? ✨",
       },
     });
 
     const conversationId = await ctx.db.insert("conversations", {
       contactSessionId: session._id,
+      type: "widget",
       status: "unresolved",
       organizationId: args.organizationId,
       threadId,

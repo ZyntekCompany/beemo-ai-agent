@@ -36,6 +36,10 @@ export const getStats = query({
     const unresolved = allConversations.filter((c) => c.status === "unresolved").length;
     const resolved = allConversations.filter((c) => c.status === "resolved").length;
     const escalated = allConversations.filter((c) => c.status === "escalated").length;
+    
+    // Count by type
+    const whatsappConversations = allConversations.filter((c) => c.type === "whatsapp").length;
+    const widgetConversations = allConversations.filter((c) => c.type === "widget").length;
 
     // Calculate resolution rate
     const resolutionRate =
@@ -55,7 +59,7 @@ export const getStats = query({
     // Initialize all days
     for (let i = 29; i >= 0; i--) {
       const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
-      const dateKey = date.toISOString().split("T")[0];
+      const dateKey = date.toISOString().split("T")[0]!;
       dailyData[dateKey] = {
         date: dateKey,
         total: 0,
@@ -68,7 +72,7 @@ export const getStats = query({
     // Count conversations by day and status
     recentConversations.forEach((conversation) => {
       const date = new Date(conversation._creationTime);
-      const dateKey = date.toISOString().split("T")[0];
+      const dateKey = date.toISOString().split("T")[0]!;
 
       if (dailyData[dateKey]) {
         dailyData[dateKey].total++;
@@ -125,6 +129,8 @@ export const getStats = query({
         resolutionRate,
         totalContacts,
         activeContacts,
+        whatsappConversations,
+        widgetConversations,
       },
       timeSeriesData,
       statusDistribution,

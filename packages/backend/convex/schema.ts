@@ -30,6 +30,7 @@ export default defineSchema({
     .index("by_organization_id_and_service", ["organizationId", "service"]),
   conversations: defineTable({
     threadId: v.string(),
+    type: v.union(v.literal("widget"), v.literal("whatsapp")),
     organizationId: v.string(),
     contactSessionId: v.id("contactSessions"),
     status: v.union(

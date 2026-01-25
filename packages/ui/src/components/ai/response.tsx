@@ -1,12 +1,12 @@
 "use client";
 
-import type { HTMLAttributes } from "react";
+import * as React from "react";
 import { memo } from "react";
 import ReactMarkdown, { type Options } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { cn } from "@workspace/ui/lib/utils";
 
-export type AIResponseProps = HTMLAttributes<HTMLDivElement> & {
+export type AIResponseProps = React.ComponentProps<"div"> & {
   options?: Options;
   children: Options["children"];
 };
