@@ -15,6 +15,7 @@
     "@clerk/localizations": "^3.32.1",
     "@clerk/nextjs": "^6.36.5",
     "@convex-dev/agent": "0.1.16",
+    "@ducanh2912/next-pwa": "^10.2.9",
     "@hookform/resolvers": "^5.2.2",
     "@lottiefiles/dotlottie-react": "^0.17.13",
     "@radix-ui/react-accordion": "^1.2.12",
