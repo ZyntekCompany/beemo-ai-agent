@@ -50,12 +50,18 @@ export const metadata: Metadata = {
     images: ["/web-app-manifest-512x512.png"],
   },
   themeColor: "#0EA5A4",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Beemo",
+  },
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon-96x96.png",
     apple: "/apple-touch-icon.png",
     other: [{ url: "/favicon.svg", rel: "icon", sizes: "any" }],
   },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({

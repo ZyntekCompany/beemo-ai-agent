@@ -1,6 +1,9 @@
 {
-  "name": "Beemo",
+  "name": "Beemo - Panel de Control",
   "short_name": "Beemo",
+  "description": "Automatiza el soporte al cliente con IA: respuestas automáticas, clasificación de tickets y analíticas.",
+  "start_url": "/",
+  "scope": "/",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -13,9 +16,17 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
-  "theme_color": "#ffffff",
+  "theme_color": "#0b63f3",
   "background_color": "#ffffff",
-  "display": "standalone"
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "categories": ["business", "productivity"]
 }

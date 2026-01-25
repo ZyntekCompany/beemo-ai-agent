@@ -75,7 +75,7 @@ Antes de comenzar, asegúrate de tener instalado:
 
 ```bash
 git clone <url-del-repositorio>
-cd vera-ai
+cd beemo-ai
 ```
 
 2. **Instala las dependencias**
