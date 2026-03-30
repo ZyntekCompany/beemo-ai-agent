@@ -15,15 +15,9 @@
     "turbo": "^2.6.3",
     "typescript": "5.7.3"
   },
-  "packageManager": "pnpm@10.4.1",
+  "packageManager": "bun@1.2.13",
   "engines": {
     "node": ">=20"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@clerk/shared",
-      "esbuild"
-    ]
   },
   "workspaces": [
     "apps/*",
