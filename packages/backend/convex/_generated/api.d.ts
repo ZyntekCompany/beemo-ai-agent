@@ -10,14 +10,20 @@
 
 import type * as constants from "../constants.js";
 import type * as http from "../http.js";
+import type * as lib_barberNameMatch from "../lib/barberNameMatch.js";
+import type * as lib_bogotaTime from "../lib/bogotaTime.js";
 import type * as lib_extractTextContent from "../lib/extractTextContent.js";
+import type * as lib_phoneE164 from "../lib/phoneE164.js";
+import type * as lib_reservationReminder from "../lib/reservationReminder.js";
 import type * as lib_secrets from "../lib/secrets.js";
 import type * as private_analytics from "../private/analytics.js";
 import type * as private_contactSessions from "../private/contactSessions.js";
 import type * as private_conversations from "../private/conversations.js";
 import type * as private_files from "../private/files.js";
+import type * as private_googleCalendar from "../private/googleCalendar.js";
 import type * as private_messages from "../private/messages.js";
 import type * as private_plugins from "../private/plugins.js";
+import type * as private_reservations from "../private/reservations.js";
 import type * as private_secrets from "../private/secrets.js";
 import type * as private_vapi from "../private/vapi.js";
 import type * as private_widgetSettings from "../private/widgetSettings.js";
@@ -25,6 +31,7 @@ import type * as public_contactSessions from "../public/contactSessions.js";
 import type * as public_conversations from "../public/conversations.js";
 import type * as public_messages from "../public/messages.js";
 import type * as public_organizations from "../public/organizations.js";
+import type * as public_reservations from "../public/reservations.js";
 import type * as public_secrets from "../public/secrets.js";
 import type * as public_widgetSettings from "../public/widgetSettings.js";
 import type * as system_ai_agents_supportAgent from "../system/ai/agents/supportAgent.js";
@@ -34,7 +41,9 @@ import type * as system_ai_tools_resolveConversation from "../system/ai/tools/re
 import type * as system_ai_tools_search from "../system/ai/tools/search.js";
 import type * as system_contactSession from "../system/contactSession.js";
 import type * as system_conversations from "../system/conversations.js";
+import type * as system_googleCalendar from "../system/googleCalendar.js";
 import type * as system_plugins from "../system/plugins.js";
+import type * as system_reservations from "../system/reservations.js";
 import type * as system_secrets from "../system/secrets.js";
 import type * as system_subscriptions from "../system/subscriptions.js";
 import type * as system_ycloud from "../system/ycloud.js";
@@ -49,14 +58,20 @@ import type {
 declare const fullApi: ApiFromModules<{
   constants: typeof constants;
   http: typeof http;
+  "lib/barberNameMatch": typeof lib_barberNameMatch;
+  "lib/bogotaTime": typeof lib_bogotaTime;
   "lib/extractTextContent": typeof lib_extractTextContent;
+  "lib/phoneE164": typeof lib_phoneE164;
+  "lib/reservationReminder": typeof lib_reservationReminder;
   "lib/secrets": typeof lib_secrets;
   "private/analytics": typeof private_analytics;
   "private/contactSessions": typeof private_contactSessions;
   "private/conversations": typeof private_conversations;
   "private/files": typeof private_files;
+  "private/googleCalendar": typeof private_googleCalendar;
   "private/messages": typeof private_messages;
   "private/plugins": typeof private_plugins;
+  "private/reservations": typeof private_reservations;
   "private/secrets": typeof private_secrets;
   "private/vapi": typeof private_vapi;
   "private/widgetSettings": typeof private_widgetSettings;
@@ -64,6 +79,7 @@ declare const fullApi: ApiFromModules<{
   "public/conversations": typeof public_conversations;
   "public/messages": typeof public_messages;
   "public/organizations": typeof public_organizations;
+  "public/reservations": typeof public_reservations;
   "public/secrets": typeof public_secrets;
   "public/widgetSettings": typeof public_widgetSettings;
   "system/ai/agents/supportAgent": typeof system_ai_agents_supportAgent;
@@ -73,7 +89,9 @@ declare const fullApi: ApiFromModules<{
   "system/ai/tools/search": typeof system_ai_tools_search;
   "system/contactSession": typeof system_contactSession;
   "system/conversations": typeof system_conversations;
+  "system/googleCalendar": typeof system_googleCalendar;
   "system/plugins": typeof system_plugins;
+  "system/reservations": typeof system_reservations;
   "system/secrets": typeof system_secrets;
   "system/subscriptions": typeof system_subscriptions;
   "system/ycloud": typeof system_ycloud;

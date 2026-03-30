@@ -7,8 +7,11 @@ import { components } from "../_generated/api";
 import {
   escalateConversation,
   resolveConversation,
+  createReservationFromChat,
+  listAvailabilityFromChat,
 } from "./ai/tools/resolveConversation";
 import { search } from "./ai/tools/search";
+import { supportAgentSystemWithCurrentBogotaTime } from "./ai/constants";
 import { getSecretValue, parseSecretValue } from "../lib/secrets";
 import { Id } from "../_generated/dataModel";
 import type { PaginationResult } from "convex/server";
@@ -233,15 +236,20 @@ export const processInboundMessage = internalAction({
       const shouldTriggerAgent: boolean = conversation.status === "unresolved";
 
       if (shouldTriggerAgent) {
-        // Ejecutar el agente
+        const beforeMs = Date.now();
+
+        // Ejecutar el agente (fecha Bogotá en system; el texto del usuario se guarda limpio en el hilo)
         await supportAgent.generateText(
           ctx,
           { threadId },
           {
             prompt: args.text,
+            system: supportAgentSystemWithCurrentBogotaTime(),
             tools: {
               escalateConversationTool: escalateConversation,
               resolveConversationTool: resolveConversation,
+              createReservationTool: createReservationFromChat,
+              listAvailabilityTool: listAvailabilityFromChat,
               searchTool: search,
             },
           },
@@ -251,21 +259,33 @@ export const processInboundMessage = internalAction({
         if (isWhatsApp) {
           try {
             // Esperar un poco para asegurar que el mensaje se guardó
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 500));
 
-            // Obtener los mensajes después de que el agente responda
+            // Obtener los mensajes recientes del thread
             const messagesAfter: PaginationResult<MessageDoc> =
               await supportAgent.listMessages(ctx, {
                 threadId,
-                paginationOpts: { numItems: 10, cursor: null },
+                paginationOpts: { numItems: 20, cursor: null },
               });
 
-            // Encontrar el último mensaje del agente (role: "assistant")
-            // Los mensajes vienen ordenados del más reciente al más antiguo
+            // Buscar el mensaje de texto del agente creado durante ESTA ejecución
+            // Los mensajes vienen del más reciente al más antiguo
             const lastAssistantMessage: MessageDoc | undefined =
-              messagesAfter.page.find(
-                (msg) => msg.message?.role === "assistant",
-              );
+              messagesAfter.page.find((msg) => {
+                if (msg.message?.role !== "assistant") return false;
+                // Solo mensajes creados después de que empezamos esta ejecución
+                if (msg._creationTime < beforeMs) return false;
+                // Solo mensajes de texto (no tool calls)
+                const content = msg.message.content;
+                if (typeof content === "string") return content.trim().length > 0;
+                if (Array.isArray(content)) {
+                  return content.some(
+                    (part: { type: string; text?: string }) =>
+                      part.type === "text" && (part.text ?? "").trim().length > 0,
+                  );
+                }
+                return false;
+              });
 
             if (lastAssistantMessage?.message) {
               const messageContent = lastAssistantMessage.message.content;
@@ -281,23 +301,18 @@ export const processInboundMessage = internalAction({
                     : String(messageContent);
 
               if (messageText.trim() && contactSession?.email) {
-                // Extraer el número de teléfono del email (formato: "whatsapp:+573181833248")
                 const phoneNumber: string = contactSession.email.replace(
                   /^whatsapp:/,
                   "",
                 );
 
-                // Enviar el mensaje a WhatsApp usando la API de YCloud
-                // Las credenciales se obtienen automáticamente desde AWS Secrets
-                // NO usar wamid para enviar mensajes normales (no replies)
                 await ctx.runAction(
                   internal.system.ycloud.sendWhatsAppMessage,
                   {
                     organizationId: args.organizationId,
                     to: phoneNumber,
                     text: messageText,
-                    // wamid: undefined - No hacer reply, enviar mensaje normal
-                    sendDirectly: false, // Usar cola asíncrona (POST /v2/whatsapp/messages)
+                    sendDirectly: false,
                   },
                 );
 
@@ -305,6 +320,11 @@ export const processInboundMessage = internalAction({
                   phone: phoneNumber,
                   threadId,
                   messageLength: messageText.length,
+                });
+              } else {
+                console.warn("YCloud: no se encontró mensaje de texto del agente para enviar", {
+                  threadId,
+                  messagesChecked: messagesAfter.page.length,
                 });
               }
             }
@@ -317,7 +337,6 @@ export const processInboundMessage = internalAction({
               phone: args.phone,
               threadId,
             });
-            // No lanzar el error para no interrumpir el flujo principal
           }
         }
       } else {
@@ -518,6 +537,106 @@ export const sendWhatsAppMessage = internalAction({
     }
 
     console.log("YCloud sendWhatsAppMessage: éxito", {
+      messageId: result.id,
+      status: result.status,
+    });
+
+    return result;
+  },
+});
+
+/**
+ * Envía un audio por WhatsApp (URL pública HTTPS). YCloud documenta sendDirectly para este tipo.
+ */
+export const sendWhatsAppAudio = internalAction({
+  args: {
+    organizationId: v.string(),
+    to: v.string(),
+    audioLink: v.string(),
+    sendDirectly: v.optional(v.boolean()),
+  },
+  handler: async (ctx, args): Promise<YCloudApiResponse> => {
+    const plugin = await ctx.runQuery(
+      internal.system.plugins.getByOrganizationIdAndService,
+      {
+        organizationId: args.organizationId,
+        service: "ycloud",
+      },
+    );
+
+    if (!plugin) {
+      throw new Error("YCloud plugin not found for this organization");
+    }
+
+    const secretName = plugin.secretName;
+    if (!secretName) {
+      throw new Error(
+        "YCloud credentials not configured. Please configure them via the YCloud plugin.",
+      );
+    }
+
+    const secretValue = await getSecretValue(secretName);
+    const credentials = parseSecretValue<{
+      apiKey: string;
+      wabaNumber?: string;
+    }>(secretValue);
+
+    if (!credentials?.apiKey) {
+      throw new Error("YCloud API key not configured");
+    }
+
+    if (!credentials.wabaNumber) {
+      throw new Error(
+        "WhatsApp Business Account number (wabaNumber) not configured for this organization.",
+      );
+    }
+
+    const useDirect = args.sendDirectly !== false;
+    const endpoint: string = useDirect
+      ? "https://api.ycloud.com/v2/whatsapp/messages/sendDirectly"
+      : "https://api.ycloud.com/v2/whatsapp/messages";
+
+    const body: Record<string, unknown> = {
+      from: credentials.wabaNumber,
+      to: args.to,
+      type: "audio",
+      audio: {
+        link: args.audioLink,
+      },
+    };
+
+    const response: Response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Key": credentials.apiKey,
+      },
+      body: JSON.stringify(body),
+    });
+
+    const responseText: string = await response.text();
+
+    if (!response.ok) {
+      let errorMessage = `YCloud API error: ${response.status} ${response.statusText}`;
+      try {
+        const errorJson = JSON.parse(responseText);
+        if (errorJson.error?.message) {
+          errorMessage = `YCloud API error: ${errorJson.error.message}`;
+        }
+      } catch {
+        errorMessage = `YCloud API error: ${response.status} - ${responseText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    let result: YCloudApiResponse;
+    try {
+      result = JSON.parse(responseText);
+    } catch {
+      throw new Error(`YCloud API returned invalid JSON: ${responseText}`);
+    }
+
+    console.log("YCloud sendWhatsAppAudio: éxito", {
       messageId: result.id,
       status: result.status,
     });

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -45,11 +45,20 @@ export function ConversationsPanel() {
   const typeFilter = useAtomValue(typeFilterAtom);
   const setTypeFilter = useSetAtom(typeFilterAtom);
 
+  const effectiveTypeFilter = typeFilter === "widget" ? "all" : typeFilter;
+
+  // Filtro widget oculto en UI; limpiar "widget" persistido en localStorage
+  useEffect(() => {
+    if (typeFilter === "widget") {
+      setTypeFilter("all");
+    }
+  }, [typeFilter, setTypeFilter]);
+
   const conversations = usePaginatedQuery(
     api.private.conversations.getMany,
     {
       status: statusFilter === "all" ? undefined : statusFilter,
-      type: typeFilter === "all" ? undefined : typeFilter,
+      type: effectiveTypeFilter === "all" ? undefined : effectiveTypeFilter,
     },
     { initialNumItems: 10 },
   );
@@ -110,12 +119,12 @@ export function ConversationsPanel() {
         </Select>
       </div>
       <Tabs
-        value={typeFilter}
+        value={effectiveTypeFilter}
         onValueChange={(value) =>
           setTypeFilter(value as "all" | "whatsapp" | "widget")
         }
       >
-        <TabsList className="grid w-full grid-cols-3 h-12 bg-transparent rounded-none border-b">
+        <TabsList className="grid w-full grid-cols-2 h-12 bg-transparent rounded-none border-b">
           <TabsTrigger
             value="all"
             className="data-[state=active]:shadow-none data-[state=active]:bg-primary/10 data-[state=active]:text-primary "
@@ -128,8 +137,10 @@ export function ConversationsPanel() {
           >
             WhatsApp
           </TabsTrigger>
+          {/* Oculto temporalmente; no eliminar — volver a grid-cols-3 y quitar hidden */}
           <TabsTrigger
             value="widget"
+            hidden
             className="data-[state=active]:shadow-none data-[state=active]:bg-primary/10 data-[state=active]:text-primary "
           >
             Widget

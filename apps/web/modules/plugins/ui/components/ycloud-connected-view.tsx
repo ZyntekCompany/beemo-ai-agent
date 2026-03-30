@@ -20,9 +20,11 @@ export function YCloudConnectedView({
 }: YCloudConnectedViewProps) {
   const { organization } = useOrganization();
 
-  const snippet = typeof window !== "undefined"
-    ? `${window.location.origin}/webhooks/ycloud/${organization?.id}`
-    : `https://your-domain.convex.site/webhooks/ycloud/${organization?.id}`
+  const convexSiteUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.replace(
+    ".convex.cloud",
+    ".convex.site"
+  );
+  const snippet = `${convexSiteUrl}/webhooks/ycloud/${organization?.id}`;
 
     const handleCopy = async () => {
       try {

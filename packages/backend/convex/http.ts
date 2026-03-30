@@ -265,6 +265,96 @@ http.route({
   }),
 });
 
+// OAuth Google Calendar - callback después de que el usuario autoriza
+http.route({
+  path: "/oauth/google/callback",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    const url = new URL(request.url);
+    const code = url.searchParams.get("code");
+    const state = url.searchParams.get("state");
+    const oauthError = url.searchParams.get("error");
+
+    if (oauthError || !code || !state) {
+      return new Response(`OAuth error: ${oauthError ?? "missing code or state"}`, { status: 400 });
+    }
+
+    let orgId: string;
+    let returnUrl: string;
+    try {
+      const decoded = JSON.parse(atob(state));
+      orgId = decoded.orgId;
+      returnUrl = decoded.returnUrl;
+    } catch {
+      return new Response("Invalid state parameter", { status: 400 });
+    }
+
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const redirectUri = `${url.origin}/oauth/google/callback`;
+
+    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        code,
+        client_id: clientId!,
+        client_secret: clientSecret!,
+        redirect_uri: redirectUri,
+        grant_type: "authorization_code",
+      }),
+    });
+
+    if (!tokenResponse.ok) {
+      const err = await tokenResponse.text();
+      console.error("Google token exchange error:", err);
+      return new Response("Error al obtener tokens de Google", { status: 500 });
+    }
+
+    const tokens = await tokenResponse.json() as {
+      access_token?: string;
+      refresh_token?: string;
+    };
+
+    if (!tokens.refresh_token) {
+      return new Response(
+        "No se recibió refresh_token. Asegúrate de que la app solicite acceso offline y consent=force.",
+        { status: 400 },
+      );
+    }
+
+    let accountEmail: string | undefined;
+    try {
+      const userInfoResponse = await fetch(
+        "https://www.googleapis.com/oauth2/v2/userinfo",
+        { headers: { Authorization: `Bearer ${tokens.access_token}` } },
+      );
+      const userInfo = await userInfoResponse.json() as { email?: string };
+      accountEmail = userInfo.email;
+    } catch {
+      // No crítico, continuar sin email
+    }
+
+    await ctx.runMutation(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (internal as any).private.googleCalendar.saveConnection,
+      {
+        organizationId: orgId,
+        refreshToken: tokens.refresh_token,
+        accountEmail,
+      },
+    );
+
+    const redirectTarget = new URL(returnUrl);
+    redirectTarget.searchParams.set("connected", "true");
+
+    return new Response(null, {
+      status: 302,
+      headers: { Location: redirectTarget.toString() },
+    });
+  }),
+});
+
 async function validateRequest(req: Request): Promise<WebhookEvent | null> {
   const payloadString = await req.text();
   const svixHeaders = {

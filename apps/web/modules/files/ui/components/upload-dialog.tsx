@@ -19,6 +19,16 @@ import {
 import { Label } from "@workspace/ui/components/label";
 import { Input } from "@workspace/ui/components/input";
 import { Button } from "@workspace/ui/components/button";
+import toast from "react-hot-toast";
+
+function uploadErrorMessage(error: unknown): string {
+  if (error && typeof error === "object" && "data" in error) {
+    const data = (error as { data?: { message?: string } }).data;
+    if (data?.message) return data.message;
+  }
+  if (error instanceof Error) return error.message;
+  return "No se pudo subir el archivo.";
+}
 
 interface UploadDialogProps {
   open: boolean;
@@ -64,13 +74,15 @@ export function UploadDialog({
         bytes: await blob.arrayBuffer(),
         filename,
         mimeType: blob.type || "text/plain",
-        category: uploadForm.category,
+        category: uploadForm.category.trim() || undefined,
       });
 
+      toast.success("Documento añadido a la base de conocimiento");
       onFileUploaded?.();
       handleCancel();
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error(uploadErrorMessage(error));
     } finally {
       setIsUploading(false);
     }
@@ -89,16 +101,20 @@ export function UploadDialog({
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Upload Document</DialogTitle>
+          <DialogTitle>Subir documento</DialogTitle>
           <DialogDescription>
-            Upload documents to your Knowledge base for AI-powered search and
-            retrieval
+            Solo se aceptan archivos <strong>.pdf</strong>, <strong>.txt</strong> o{" "}
+            <strong>.csv</strong>. Si tu texto está en Word o en el portapapeles, guárdalo primero
+            como <code className="text-xs">.txt</code> y súbelo aquí.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category">
+              Categoría{" "}
+              <span className="text-muted-foreground text-xs font-normal">(opcional)</span>
+            </Label>
             <Input
               className="w-full"
               id="category"
@@ -108,7 +124,7 @@ export function UploadDialog({
                   category: e.target.value,
                 }))
               }
-              placeholder="e.g. Documentation, Support, Product"
+              placeholder="Ej. Políticas, Horarios, Atención"
               type="text"
               value={uploadForm.category}
             />
@@ -116,8 +132,8 @@ export function UploadDialog({
 
           <div className="space-y-2">
             <Label htmlFor="filename">
-              Filename{" "}
-              <span className="text-muted-foreground text-xs">(optional)</span>
+              Nombre del archivo{" "}
+              <span className="text-muted-foreground text-xs">(opcional)</span>
             </Label>
             <Input
               className="w-full"
@@ -128,7 +144,7 @@ export function UploadDialog({
                   filename: e.target.value,
                 }))
               }
-              placeholder="Override default filename"
+              placeholder="Si vacío, se usa el nombre del archivo"
               type="text"
               value={uploadForm.filename}
             />
@@ -156,15 +172,10 @@ export function UploadDialog({
             onClick={handleCancel}
             variant="outline"
           >
-            Cancel
+            Cancelar
           </Button>
-          <Button
-            disabled={
-              isUploading || uploadedFiles.length === 0 || !uploadForm.category
-            }
-            onClick={handleUpload}
-          >
-            {isUploading ? "Uploading..." : "Upload"}
+          <Button disabled={isUploading || uploadedFiles.length === 0} onClick={handleUpload}>
+            {isUploading ? "Subiendo…" : "Subir"}
           </Button>
         </DialogFooter>
       </DialogContent>

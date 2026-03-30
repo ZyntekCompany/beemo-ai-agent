@@ -4,11 +4,13 @@ import { components, internal } from "../_generated/api";
 import { supportAgent } from "../system/ai/agents/supportAgent";
 import { paginationOptsValidator } from "convex/server";
 import {
+  createReservationFromChat,
   escalateConversation,
-  resolveConversation,
+  listAvailabilityFromChat,
 } from "../system/ai/tools/resolveConversation";
 import { saveMessage } from "@convex-dev/agent";
 import { search } from "../system/ai/tools/search";
+import { supportAgentSystemWithCurrentBogotaTime } from "../system/ai/constants";
 
 export const create = action({
   args: {
@@ -49,14 +51,7 @@ export const create = action({
       contactSessionId: args.contactSessionId,
     })
 
-    const subscription = await ctx.runQuery(
-      internal.system.subscriptions.getByOrganizationId,
-      {
-        organizationId: conversation.organizationId,
-      }
-    )
-
-    const shouldTriggerAgent = conversation.status === "unresolved" && subscription?.status === "active";
+    const shouldTriggerAgent = conversation.status === "unresolved";
 
     if (shouldTriggerAgent) {
       await supportAgent.generateText(
@@ -64,10 +59,12 @@ export const create = action({
         { threadId: args.threadId },
         {
           prompt: args.prompt,
+          system: supportAgentSystemWithCurrentBogotaTime(),
           tools: {
             escalateConversationTool: escalateConversation,
-            resolveConversationTool: resolveConversation,
             searchTool: search,
+            createReservationTool: createReservationFromChat,
+            listAvailabilityTool: listAvailabilityFromChat,
           },
         },
       );

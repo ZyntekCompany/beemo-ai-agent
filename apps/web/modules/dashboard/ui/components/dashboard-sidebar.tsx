@@ -22,8 +22,10 @@ import {
   PaletteIcon,
   BarChart3Icon,
   MessageCircleIcon,
+  CalendarDaysIcon,
 } from "lucide-react";
 import React from "react";
+import { GoogleCalendarBrandIcon } from "@/components/google-calendar-brand-icon";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
@@ -48,9 +50,20 @@ const custommerSupportItems = [
     url: "/files",
     icon: LibraryBigIcon,
   },
+  {
+    title: "Reservations",
+    url: "/reservations",
+    icon: CalendarDaysIcon,
+  },
 ];
 
-const configurationItems = [
+type SidebarNavIcon = React.ComponentType<{ className?: string }>;
+
+const configurationItems: {
+  title: string;
+  url: string;
+  icon: SidebarNavIcon;
+}[] = [
   {
     title: "Widget Customization",
     url: "/customization",
@@ -65,6 +78,11 @@ const configurationItems = [
     title: "Voice Assistant",
     url: "/plugins/vapi",
     icon: Mic,
+  },
+  {
+    title: "Google Calendar",
+    url: "/plugins/google-calendar",
+    icon: GoogleCalendarBrandIcon,
   },
   {
     title: "YCloud WhatsApp",
@@ -134,7 +152,7 @@ export function DashboardSidebar() {
                     isActive={isActive(item.url)}
                     className={cn(
                       isActive(item.url) &&
-                      "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
+                      "bg-linear-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
                     )}
                     tooltip={item.title}
                   >
@@ -161,7 +179,7 @@ export function DashboardSidebar() {
                     isActive={isActive(item.url)}
                     className={cn(
                       isActive(item.url) &&
-                      "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
+                      "bg-linear-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
                     )}
                     tooltip={item.title}
                   >
@@ -188,7 +206,7 @@ export function DashboardSidebar() {
                     isActive={isActive(item.url)}
                     className={cn(
                       isActive(item.url) &&
-                      "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
+                      "bg-linear-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
                     )}
                     tooltip={item.title}
                   >
@@ -215,7 +233,7 @@ export function DashboardSidebar() {
                     isActive={isActive(item.url)}
                     className={cn(
                       isActive(item.url) &&
-                      "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
+                      "bg-linear-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90! transition-colors!"
                     )}
                     tooltip={item.title}
                   >
